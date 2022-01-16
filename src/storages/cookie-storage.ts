@@ -1,6 +1,6 @@
-import { IStorage } from './types/storage';
+import { IStorage } from '../types/storage';
 import cookie, { CookieSerializeOptions } from 'cookie';
-import { decodeValue, encodeValue } from './utils';
+import { decodeValue, encodeValue } from '../utils';
 
 export interface CookieStorageOptions {
     prefix: string;

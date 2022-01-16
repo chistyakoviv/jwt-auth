@@ -1,21 +1,19 @@
 import { IStorage } from './types/storage';
 
-export interface ModuleOptions {
+export interface AuthOptions {
     redirect: {
         login: string;
         logout: string;
         home: string;
     };
-    storages: {
-        [storage: string]: IStorage;
-    };
+    storages: IStorage[];
 }
 
-export const deufaultOptions: ModuleOptions = {
+export const deufaultOptions: AuthOptions = {
     redirect: {
         login: '/login',
         logout: '/logout',
         home: '/',
     },
-    storages: {},
+    storages: [],
 };
