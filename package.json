@@ -2,7 +2,7 @@
   "name": "jwt-auth",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/cjs/index.js",
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && npm run build:cjs",
