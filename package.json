@@ -4,7 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf dist",
+    "build": "npm run clean && npm run build:cjs",
+    "build:cjs": "tsc -p ./typescript/tsconfig.cjs.json",
+    "build:es5": "tsc -p ./typescript/tsconfig.esm5.json",
+    "build:es2015": "tsc -p ./typescript/tsconfig.esm2015.json",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "repository": {
     "type": "git",
@@ -19,5 +29,39 @@
   "bugs": {
     "url": "https://github.com/chistyakoviv/jwt-auth/issues"
   },
-  "homepage": "https://github.com/chistyakoviv/jwt-auth#readme"
+  "homepage": "https://github.com/chistyakoviv/jwt-auth#readme",
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "@types/node": "^17.0.8",
+    "@typescript-eslint/eslint-plugin": "^5.9.1",
+    "@typescript-eslint/parser": "^5.9.1",
+    "eslint": "^8.7.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.4.7",
+    "prettier": "^2.5.1",
+    "ts-jest": "^27.1.3",
+    "tsconfig-paths": "^3.12.0",
+    "typescript": "^4.5.4"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "rimraf": "^3.0.2"
+  }
 }
