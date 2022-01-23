@@ -13,8 +13,19 @@ export interface CookieStorageOptions {
     };
 }
 
+const DEFAULTS: CookieStorageOptions = {
+    prefix: 'auth.',
+    cookieOptions: {
+        path: '/',
+    },
+};
+
 export class CookieStorage implements IStorage {
-    constructor(private readonly options: CookieStorageOptions) {}
+    private readonly options: CookieStorageOptions;
+
+    constructor(options: CookieStorageOptions) {
+        this.options = { ...DEFAULTS, ...options };
+    }
 
     set<V>(key: string, value: V): void {
         document.cookie = cookie.serialize(
