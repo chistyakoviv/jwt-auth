@@ -1,4 +1,6 @@
 import { IStorage } from './types/storage';
+import { BaseStrategy } from './strategies/base-strategy';
+import { StrategyOptions } from './types/strategy';
 
 export interface AuthOptions {
     redirect: {
@@ -7,6 +9,10 @@ export interface AuthOptions {
         home: string;
     };
     storages: IStorage[];
+    strategies: {
+        strategy: typeof BaseStrategy;
+        strategyOptions: StrategyOptions;
+    }[];
 }
 
 export const deufaultOptions: AuthOptions = {
@@ -16,4 +22,5 @@ export const deufaultOptions: AuthOptions = {
         home: '/',
     },
     storages: [],
+    strategies: [],
 };

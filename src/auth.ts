@@ -1,10 +1,20 @@
 import { AuthOptions } from './options';
-import { StorageAggregator } from './storages/storage-aggregator';
+import { AggregatorStorage } from './storages/aggregator-storage';
+import axios from 'axios';
+import { IStrategy } from './types/strategy';
 
-export class auth {
-    private storage: StorageAggregator;
+export class Auth {
+    private storage: AggregatorStorage;
+    private strategies: Record<string, IStrategy> = {};
+    public http = axios;
 
-    constructor(private readonly axios, private readonly options: AuthOptions) {
-        this.storage = new StorageAggregator(options.storages);
+    constructor(private readonly options: AuthOptions) {
+        this.storage = new AggregatorStorage(options.storages);
+        options.strategies.forEach((scheme) => {
+            this.strategies[scheme.strategyOptions.name] = new scheme.strategy(
+                this,
+                scheme.strategyOptions,
+            );
+        });
     }
 }
