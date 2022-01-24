@@ -1,8 +1,9 @@
-// https: github.com/nuxt-community/auth-module/blob/75c20e64cc2bb8d4db7d7fc772432132a1d9e417/src/schemes/local.ts
-// auth -> strategies (schemes) -> tokens
-
-import { Auth } from '../auth';
 import { HttpRequest, HttpResponse } from './http';
+import { Token } from '../tokens/token';
+import { RefreshToken } from '../tokens/refresh-token';
+import { RequestController } from '../controllers/request-controller';
+import { RefreshController } from '../controllers/refresh-controller';
+import { Auth } from '../auth';
 
 export interface UserOptions {
     property: string | false;
@@ -38,12 +39,57 @@ export interface TokenableStrategyOptions extends StrategyOptions {
     endpoints: EndpointsOption;
 }
 
-export interface IStrategy {
-    login(): Promise<HttpResponse>;
+export interface TokenableStrategy<
+    OptionsT extends TokenableStrategyOptions = TokenableStrategyOptions,
+> extends Strategy<OptionsT> {
+    token: Token;
+    requestController: RequestController;
+    reset(options?: { resetInterceptor: boolean }): void;
+    check(checkStatus: boolean): StrategyCheck;
+}
 
-    logout(): Promise<void>;
+export interface RefreshTokenOptions {
+    property: string | false;
+    type: string | false;
+    data: string | false;
+    maxAge: number | false;
+    required: boolean;
+    tokenRequired: boolean;
+    prefix: string;
+    expirationPrefix: string;
+}
 
-    fetchUser(): Promise<HttpResponse>;
+export interface RefreshableStrategyOptions extends TokenableStrategyOptions {
+    refreshToken: RefreshTokenOptions;
+}
 
-    reset(): void;
+export interface StrategyCheck {
+    valid: boolean;
+    tokenExpired?: boolean;
+    refreshTokenExpired?: boolean;
+    isRefreshable?: boolean;
+}
+
+export interface Strategy<OptionsT extends StrategyOptions = StrategyOptions> {
+    auth: Auth;
+    options: OptionsT;
+    check?(checkStatus: boolean): StrategyCheck;
+    login(...args: unknown[]): Promise<HttpResponse | void>;
+    fetchUser(endpoint?: HttpRequest): Promise<HttpResponse | void>;
+    setUserToken?(
+        token: string | boolean,
+        refreshToken?: string | boolean,
+    ): Promise<HttpResponse | void>;
+    logout?(endpoint?: HttpRequest): Promise<void> | void;
+    reset?(options?: { resetInterceptor: boolean }): void;
+}
+
+export interface RefreshableStrategy<
+    OptionsT extends RefreshableStrategyOptions = RefreshableStrategyOptions,
+> extends TokenableStrategy<OptionsT> {
+    refreshToken: RefreshToken;
+    refreshController: RefreshController;
+    refreshTokens(): Promise<HttpResponse | void>;
+    reset(options?: { resetInterceptor: boolean }): void;
+    check(checkStatus: boolean): StrategyCheck;
 }
