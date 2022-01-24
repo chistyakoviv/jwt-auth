@@ -18,6 +18,47 @@ export function decodeValue(val: any): any {
         } catch (_) {}
     }
 
-    // Return as is
     return val;
+}
+
+export function getProp(
+    holder: Record<string, any>,
+    propName: string | false,
+): any {
+    if (!propName || !holder || typeof holder !== 'object') {
+        return holder;
+    }
+
+    if (propName in holder) {
+        return holder[propName];
+    }
+
+    return holder;
+}
+
+export function addTokenPrefix(
+    token: string | boolean,
+    tokenType: string | false,
+): string | boolean {
+    if (
+        !token ||
+        !tokenType ||
+        typeof token !== 'string' ||
+        token.startsWith(tokenType)
+    ) {
+        return token;
+    }
+
+    return `${tokenType} ${token}`;
+}
+
+export function removeTokenPrefix(
+    token: string | boolean,
+    tokenType: string | false,
+): string | boolean {
+    if (!token || !tokenType || typeof token !== 'string') {
+        return token;
+    }
+
+    return token.replace(`${tokenType} `, '');
 }
