@@ -1,28 +1,23 @@
 import { Auth } from '../auth';
-import { HttpResponse } from '../types/http';
-import { IStrategy, StrategyOptions } from '../types/strategy';
+import { HttpRequest, HttpResponse } from '../types/http';
+import { Strategy, StrategyOptions } from '../types/strategy';
 
 export class BaseStrategy<OptionsT extends StrategyOptions>
-    implements IStrategy
+    implements Strategy
 {
     constructor(
-        protected readonly auth: Auth,
-        protected readonly options: OptionsT,
+        public readonly auth: Auth,
+        public readonly options: OptionsT,
     ) {}
 
-    async login(): Promise<HttpResponse> {
+    async login(
+        params: HttpRequest,
+        { reset = true } = {},
+    ): Promise<HttpResponse | void> {
         return Promise.resolve();
     }
 
-    async logout(): Promise<void> {
+    async fetchUser(): Promise<HttpResponse | void> {
         return Promise.resolve();
-    }
-
-    async fetchUser(): Promise<HttpResponse> {
-        return Promise.resolve();
-    }
-
-    reset(): void {
-        return;
     }
 }

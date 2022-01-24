@@ -1,5 +1,5 @@
-import { IStorage } from './types/storage';
-import { BaseStrategy } from './strategies/base-strategy';
+import { Storage } from './types/storage';
+import type { BaseStrategy } from './strategies/base-strategy';
 import { StrategyOptions } from './types/strategy';
 
 export interface AuthOptions {
@@ -8,7 +8,7 @@ export interface AuthOptions {
         logout: string;
         home: string;
     };
-    storages: IStorage[];
+    storages: Storage[];
     strategies: {
         strategy: typeof BaseStrategy;
         strategyOptions: StrategyOptions;

@@ -1,11 +1,15 @@
 import { Auth } from '../auth';
+import { RequestController } from '../controllers/request-controller';
+import { Token } from '../tokens/token';
 import { HttpRequest, HttpResponse } from '../types/http';
-import {
+import type {
     EndpointsOption,
-    IStrategy,
+    StrategyCheck,
+    TokenableStrategy,
     TokenableStrategyOptions,
     UserOptions,
 } from '../types/strategy';
+import { getProp } from '../utils';
 import { BaseStrategy } from './base-strategy';
 
 export interface LocalStrategyEndpoints extends EndpointsOption {
@@ -59,24 +63,64 @@ const DEFAULTS: LocalStrategyOptions = {
 
 export class LocalStrategy<OptionsT extends LocalStrategyOptions>
     extends BaseStrategy<OptionsT>
-    implements IStrategy
+    implements TokenableStrategy
 {
-    constructor(protected readonly auth: Auth, options: OptionsT) {
+    private interceptor;
+    public token: Token;
+    public requestController: RequestController;
+
+    constructor(public readonly auth: Auth, public readonly options: OptionsT) {
         super(auth, { ...DEFAULTS, ...options });
+
+        this.token = new Token(this, this.auth.storage);
+        this.requestController = new RequestController(this);
     }
 
-    async login(params: HttpRequest): Promise<HttpResponse> {
+    async login(
+        params: HttpRequest,
+        { reset = true } = {},
+    ): Promise<HttpResponse | void> {
+        if (!this.options.endpoints.login) {
+            return;
+        }
+
+        if (reset) {
+            this.auth.reset({ resetInterceptor: false });
+        }
+
+        if (this.options.clientId) {
+            params.data.client_id = this.options.clientId;
+        }
+
+        if (this.options.grantType) {
+            params.data.grant_type = this.options.grantType;
+        }
+
+        if (this.options.scope) {
+            params.data.scope = this.options.scope;
+        }
+
         const reqeustData = { ...params, ...this.options.endpoints.login };
-        const response = await this.auth.http.request(reqeustData);
+        const response = await this.auth.httpClient.request(reqeustData);
 
         this.updateTokens(response);
+
+        if (!this.interceptor) {
+            this.initializeRequestInterceptor();
+        }
+
+        if (this.options.user.autoFetch) {
+            await this.fetchUser();
+        }
+
+        return response;
     }
 
     async logout(): Promise<void> {
         return Promise.resolve();
     }
 
-    async fetchUser(): Promise<HttpResponse> {
+    async fetchUser(): Promise<HttpResponse | void> {
         return Promise.resolve();
     }
 
@@ -84,7 +128,17 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
         return;
     }
 
-    private updateTokens(response: HttpResponse): void {
+    check(checkStatus: boolean): StrategyCheck {}
+
+    protected updateTokens(response: HttpResponse): void {
+        const token = this.options.token.required
+            ? (getProp(response.data, this.options.token.property) as string)
+            : true;
+
+        this.token.set(token);
+    }
+
+    protected initializeRequestInterceptor(): void {
         return;
     }
 }
