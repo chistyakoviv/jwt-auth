@@ -1,6 +1,6 @@
-import { IStorage } from '../types/storage';
+import { Storage } from '../types/storage';
 import cookie, { CookieSerializeOptions } from 'cookie';
-import { decodeValue, encodeValue } from '../utils';
+import { decodeValue, encodeValue, isSet, isUnset } from '../utils';
 
 export interface CookieStorageOptions {
     prefix: string;
@@ -20,19 +20,20 @@ const DEFAULTS: CookieStorageOptions = {
     },
 };
 
-export class CookieStorage implements IStorage {
+export class CookieStorage implements Storage {
     private readonly options: CookieStorageOptions;
 
     constructor(options: CookieStorageOptions) {
         this.options = { ...DEFAULTS, ...options };
     }
 
-    set<V>(key: string, value: V): void {
+    set<V>(key: string, value: V): V {
         document.cookie = cookie.serialize(
             this.options.prefix + key,
             encodeValue(value),
             this.options.cookieOptions as CookieSerializeOptions,
         );
+        return value;
     }
 
     get<V>(key: string): V {
@@ -43,5 +44,19 @@ export class CookieStorage implements IStorage {
             : undefined;
 
         return decodeValue(value);
+    }
+
+    sync(key: string) {
+        const value = this.get(key);
+
+        if (isSet(value)) {
+            this.set(key, value);
+        }
+
+        return value;
+    }
+
+    remove(key: string): void {
+        this.set(key, false);
     }
 }
