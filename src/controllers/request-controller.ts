@@ -3,7 +3,7 @@ import { ExpiredAuthSessionError } from '../errors/expired-auth-session-error';
 
 export class RequestController {
     public strategy: TokenableStrategy | RefreshableStrategy;
-    private interceptor: number | null;
+    public interceptor: number | null;
     private httpClient;
 
     constructor(strategy: TokenableStrategy | RefreshableStrategy) {
@@ -47,13 +47,11 @@ export class RequestController {
                 } = this.strategy.check(true);
                 let isValid = valid;
 
-                // Refresh token has expired. There is no way to refresh. Force reset.
                 if (refreshTokenExpired) {
                     this.strategy.reset();
                     throw new ExpiredAuthSessionError();
                 }
 
-                // Token has expired.
                 if (tokenExpired) {
                     // Refresh token is not available. Force reset.
                     if (!isRefreshable) {
@@ -66,7 +64,6 @@ export class RequestController {
                         .refreshTokens()
                         .then(() => true)
                         .catch(() => {
-                            // Tokens couldn't be refreshed. Force reset.
                             this.strategy.reset();
                             throw new ExpiredAuthSessionError();
                         });
