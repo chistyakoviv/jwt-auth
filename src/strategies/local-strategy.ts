@@ -65,7 +65,6 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
     extends BaseStrategy<OptionsT>
     implements TokenableStrategy
 {
-    private interceptor;
     public token: Token;
     public requestController: RequestController;
 
@@ -76,8 +75,42 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
         this.requestController = new RequestController(this);
     }
 
+    init(): Promise<HttpResponse | void> {
+        this.initializeRequestInterceptor();
+
+        return this.auth.fetchUserOnce();
+    }
+
+    check(checkStatus = false): StrategyCheck {
+        const response = {
+            valid: false,
+            tokenExpired: false,
+        };
+
+        const token = this.token.sync();
+
+        if (!token) {
+            return response;
+        }
+
+        if (!checkStatus) {
+            response.valid = true;
+            return response;
+        }
+
+        const tokenStatus = this.token.status();
+
+        if (tokenStatus.expired()) {
+            response.tokenExpired = true;
+            return response;
+        }
+
+        response.valid = true;
+        return response;
+    }
+
     async login(
-        params: HttpRequest,
+        endpoint: HttpRequest,
         { reset = true } = {},
     ): Promise<HttpResponse | void> {
         if (!this.options.endpoints.login) {
@@ -89,25 +122,21 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
         }
 
         if (this.options.clientId) {
-            params.data.client_id = this.options.clientId;
+            endpoint.data.client_id = this.options.clientId;
         }
 
         if (this.options.grantType) {
-            params.data.grant_type = this.options.grantType;
+            endpoint.data.grant_type = this.options.grantType;
         }
 
         if (this.options.scope) {
-            params.data.scope = this.options.scope;
+            endpoint.data.scope = this.options.scope;
         }
 
-        const reqeustData = { ...params, ...this.options.endpoints.login };
+        const reqeustData = { ...endpoint, ...this.options.endpoints.login };
         const response = await this.auth.httpClient.request(reqeustData);
 
         this.updateTokens(response);
-
-        if (!this.interceptor) {
-            this.initializeRequestInterceptor();
-        }
 
         if (this.options.user.autoFetch) {
             await this.fetchUser();
@@ -116,19 +145,68 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
         return response;
     }
 
-    async logout(): Promise<void> {
-        return Promise.resolve();
+    setUserToken(token: string): Promise<HttpResponse | void> {
+        this.token.set(token);
+
+        return this.fetchUser();
     }
 
-    async fetchUser(): Promise<HttpResponse | void> {
-        return Promise.resolve();
+    fetchUser(endpoint?: HttpRequest): Promise<HttpResponse | void> {
+        if (!this.check().valid) {
+            return Promise.resolve();
+        }
+
+        // User endpoint is disabled
+        if (!this.options.endpoints.user) {
+            this.auth.setUser({});
+            return Promise.resolve();
+        }
+
+        const reqeustData = { ...endpoint, ...this.options.endpoints.user };
+
+        // Try to fetch user and then set
+        return this.auth.httpClient
+            .request(reqeustData)
+            .then((response: HttpResponse) => {
+                const userData = getProp(
+                    response.data,
+                    this.options.user.property,
+                );
+
+                if (!userData) {
+                    const error = new Error(
+                        `User Data response does not contain field ${this.options.user.property}`,
+                    );
+                    return Promise.reject(error);
+                }
+
+                this.auth.setUser(userData);
+                return response;
+            })
+            .catch((error: any) => {
+                this.auth.callOnError(error, { method: 'fetchUser' });
+                return Promise.reject(error);
+            });
     }
 
-    reset(): void {
-        return;
+    async logout(endpoint: HttpRequest = {}): Promise<void> {
+        const reqeustData = { ...endpoint, ...this.options.endpoints.logout };
+
+        if (this.options.endpoints.logout) {
+            await this.auth.httpClient.request(reqeustData);
+        }
+
+        return this.auth.reset();
     }
 
-    check(checkStatus: boolean): StrategyCheck {}
+    reset({ resetInterceptor = true } = {}): void {
+        this.auth.setUser(false);
+        this.token.reset();
+
+        if (resetInterceptor) {
+            this.requestController.reset();
+        }
+    }
 
     protected updateTokens(response: HttpResponse): void {
         const token = this.options.token.required
@@ -139,6 +217,6 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
     }
 
     protected initializeRequestInterceptor(): void {
-        return;
+        this.requestController.initializeRequestInterceptor();
     }
 }

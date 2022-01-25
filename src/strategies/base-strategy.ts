@@ -1,6 +1,6 @@
 import { Auth } from '../auth';
 import { HttpRequest, HttpResponse } from '../types/http';
-import { Strategy, StrategyOptions } from '../types/strategy';
+import { Strategy, StrategyCheck, StrategyOptions } from '../types/strategy';
 
 export class BaseStrategy<OptionsT extends StrategyOptions>
     implements Strategy
@@ -10,14 +10,27 @@ export class BaseStrategy<OptionsT extends StrategyOptions>
         public readonly options: OptionsT,
     ) {}
 
-    async login(
-        params: HttpRequest,
-        { reset = true } = {},
-    ): Promise<HttpResponse | void> {
+    init(): Promise<HttpResponse | void> {
+        return Promise.resolve();
+    }
+
+    async login(...args: unknown[]): Promise<HttpResponse | void> {
         return Promise.resolve();
     }
 
     async fetchUser(): Promise<HttpResponse | void> {
         return Promise.resolve();
+    }
+
+    reset(): void {
+        return;
+    }
+
+    check(checkStatus: boolean): StrategyCheck {
+        return { valid: false };
+    }
+
+    logout(endpoint?: HttpRequest): void | Promise<void> {
+        return;
     }
 }
