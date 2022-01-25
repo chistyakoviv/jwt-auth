@@ -44,8 +44,6 @@ export interface TokenableStrategy<
 > extends Strategy<OptionsT> {
     token: Token;
     requestController: RequestController;
-    reset(options?: { resetInterceptor: boolean }): void;
-    check(checkStatus: boolean): StrategyCheck;
 }
 
 export interface RefreshTokenOptions {
@@ -73,15 +71,16 @@ export interface StrategyCheck {
 export interface Strategy<OptionsT extends StrategyOptions = StrategyOptions> {
     auth: Auth;
     options: OptionsT;
-    check?(checkStatus: boolean): StrategyCheck;
-    login(...args: unknown[]): Promise<HttpResponse | void>;
+    check(checkStatus: boolean): StrategyCheck;
+    login(...args: any[]): Promise<HttpResponse | void>;
     fetchUser(endpoint?: HttpRequest): Promise<HttpResponse | void>;
     setUserToken?(
         token: string | boolean,
         refreshToken?: string | boolean,
     ): Promise<HttpResponse | void>;
-    logout?(endpoint?: HttpRequest): Promise<void> | void;
-    reset?(options?: { resetInterceptor: boolean }): void;
+    init(): Promise<HttpResponse | void>;
+    logout(endpoint?: HttpRequest): Promise<void> | void;
+    reset(options?: { resetInterceptor: boolean }): void;
 }
 
 export interface RefreshableStrategy<
@@ -90,6 +89,4 @@ export interface RefreshableStrategy<
     refreshToken: RefreshToken;
     refreshController: RefreshController;
     refreshTokens(): Promise<HttpResponse | void>;
-    reset(options?: { resetInterceptor: boolean }): void;
-    check(checkStatus: boolean): StrategyCheck;
 }
