@@ -7,12 +7,13 @@ import { HttpResponse } from './types/http';
 export type ErrorListener = (...args: unknown[]) => void;
 
 export class Auth {
-    public storage: AggregatorStorage;
     private strategies: Record<string, Strategy> = {};
     private state: Record<string, any> = { user: null, loggedIn: false };
     private defaultStrategy: Strategy;
-    private _errorListeners: ErrorListener[] = [];
+    private errorListeners: ErrorListener[] = [];
+
     public httpClient = axios;
+    public storage: AggregatorStorage;
 
     constructor(authOptions: AuthOptions) {
         const options: AuthOptions = { ...deufaultOptions, ...authOptions };
@@ -151,11 +152,11 @@ export class Auth {
     }
 
     onError(listener: ErrorListener): void {
-        this._errorListeners.push(listener);
+        this.errorListeners.push(listener);
     }
 
     callOnError(error: Error, payload = {}): void {
-        for (const fn of this._errorListeners) {
+        for (const fn of this.errorListeners) {
             fn(error, payload);
         }
     }
