@@ -4,7 +4,7 @@ import { decodeValue, encodeValue, isUnset } from '../utils';
 
 export interface CookieStorageOptions {
     prefix: string;
-    cookieOptions: {
+    cookieOptions?: {
         path: string;
         expires?: number | Date;
         maxAge?: number;
