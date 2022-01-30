@@ -9,7 +9,7 @@ export type ErrorListener = (...args: unknown[]) => void;
 export class Auth {
     private strategies: Record<string, Strategy> = {};
     private state: Record<string, any> = { user: null, loggedIn: false };
-    private defaultStrategy: Strategy;
+    private defaultStrategy: string;
     private errorListeners: ErrorListener[] = [];
 
     public httpClient = axios;
@@ -19,15 +19,18 @@ export class Auth {
         const options: AuthOptions = { ...deufaultOptions, ...authOptions };
 
         this.storage = new AggregatorStorage(options.storages);
-        options.strategies.forEach((scheme) => {
-            this.strategies[scheme.strategyOptions.name] = new scheme.strategy(
+        options.strategies.forEach((s) => {
+            this.strategies[s.strategyOptions.name] = new s.strategy(
                 this,
-                scheme.strategyOptions,
+                s.strategyOptions,
             );
         });
-        this.defaultStrategy = this.strategies[0];
+        this.defaultStrategy =
+            options.defaultStrategy || options.strategies.length
+                ? options.strategies[0].strategyOptions.name
+                : '';
 
-        this.init();
+        // this.init();
     }
 
     init(): Promise<HttpResponse | void> {
@@ -35,7 +38,7 @@ export class Auth {
 
         // Set default strategy if current one is invalid
         if (!this.getStrategy(false)) {
-            this.storage.set('strategy', this.defaultStrategy.options.name);
+            this.storage.set('strategy', this.defaultStrategy);
 
             if (!this.getStrategy(false)) {
                 return Promise.resolve();

@@ -1,16 +1,21 @@
 import { Storage } from './types/storage';
-import type { BaseStrategy } from './strategies/base-strategy';
-import { StrategyOptions } from './types/strategy';
+import { StrategyOptions, Strategy } from './types/strategy';
+import { Auth } from './auth';
+
+type StrategyCtor = {
+    new (auth: Auth, options: any): Strategy;
+};
 
 export interface AuthOptions {
-    redirect: {
+    redirect?: {
         login: string;
         logout: string;
         home: string;
     };
+    defaultStrategy?: string;
     storages: Storage[];
     strategies: {
-        strategy: typeof BaseStrategy;
+        strategy: StrategyCtor;
         strategyOptions: StrategyOptions;
     }[];
 }
