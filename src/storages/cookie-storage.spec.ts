@@ -4,7 +4,7 @@ describe('Cookie storage', () => {
     const cookieName = 'strategy';
 
     afterEach(() => {
-        // Reset cookies before each test
+        // Reset cookies after each test
         document.cookie = `auth.${cookieName}=1; expires=1 Jan 1970 00:00:00 GMT;`;
         document.cookie = `test.${cookieName}=1; expires=1 Jan 1970 00:00:00 GMT;`;
     });
