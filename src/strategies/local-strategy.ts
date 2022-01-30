@@ -68,7 +68,7 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
     public token: Token;
     public requestController: RequestController;
 
-    constructor(public readonly auth: Auth, public readonly options: OptionsT) {
+    constructor(public readonly auth: Auth, options: OptionsT) {
         super(auth, { ...DEFAULTS, ...options });
 
         this.token = new Token(this, this.auth.storage);
