@@ -62,7 +62,7 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "jsdom"
   },
   "dependencies": {
     "cookie": "^0.4.1",

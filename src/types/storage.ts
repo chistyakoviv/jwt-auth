@@ -3,7 +3,7 @@ export interface Storage {
 
     get<V>(key: string): V | null;
 
-    sync(key: string): any;
+    sync<V>(key: string): V | null;
 
     remove(key: string): void;
 }

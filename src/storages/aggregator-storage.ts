@@ -19,8 +19,8 @@ export class AggregatorStorage implements Storage {
         return null;
     }
 
-    sync(key: string) {
-        const value = this.get(key);
+    sync<V>(key: string): V | null {
+        const value: V | null = this.get(key);
 
         if (isSet(value)) {
             this.set(key, value);
