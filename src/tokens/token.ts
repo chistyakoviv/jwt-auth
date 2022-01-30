@@ -62,7 +62,7 @@ export class Token {
     }
 
     status(): TokenStatus {
-        return new TokenStatus(this.get(), this._getExpiration());
+        return new TokenStatus(this._getExpiration());
     }
 
     private _getExpiration(): number | false {

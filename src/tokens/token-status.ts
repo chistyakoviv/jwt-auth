@@ -7,8 +7,8 @@ export enum TokenStatusEnum {
 export class TokenStatus {
     private readonly _status: TokenStatusEnum;
 
-    constructor(token: string | boolean, tokenExpiresAt: number | false) {
-        this._status = this._calculate(token, tokenExpiresAt);
+    constructor(tokenExpiresAt: number | false) {
+        this._status = this._calculate(tokenExpiresAt);
     }
 
     unknown(): boolean {
@@ -23,13 +23,10 @@ export class TokenStatus {
         return TokenStatusEnum.EXPIRED === this._status;
     }
 
-    private _calculate(
-        token: string | boolean,
-        tokenExpiresAt: number | false,
-    ): TokenStatusEnum {
+    private _calculate(tokenExpiresAt: number | false): TokenStatusEnum {
         const now = Date.now();
 
-        if (!token || !tokenExpiresAt) {
+        if (!tokenExpiresAt) {
             return TokenStatusEnum.UNKNOWN;
         }
 
