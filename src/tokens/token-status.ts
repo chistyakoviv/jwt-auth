@@ -29,11 +29,7 @@ export class TokenStatus {
     ): TokenStatusEnum {
         const now = Date.now();
 
-        try {
-            if (!token || !tokenExpiresAt) {
-                return TokenStatusEnum.UNKNOWN;
-            }
-        } catch (error) {
+        if (!token || !tokenExpiresAt) {
             return TokenStatusEnum.UNKNOWN;
         }
 
