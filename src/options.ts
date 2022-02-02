@@ -1,9 +1,13 @@
-import { Storage } from './types/storage';
+import { Storage, StorageOptions } from './types/storage';
 import { StrategyOptions, Strategy } from './types/strategy';
 import { Auth } from './auth';
 
 type StrategyCtor = {
     new (auth: Auth, options: any): Strategy;
+};
+
+type StorageCtor = {
+    new (options?: StorageOptions): Storage;
 };
 
 export interface AuthOptions {
@@ -13,7 +17,10 @@ export interface AuthOptions {
         home: string;
     };
     defaultStrategy?: string;
-    storages: Storage[];
+    storages: {
+        storage: StorageCtor;
+        storageOptions?: StorageOptions;
+    }[];
     strategies: {
         strategy: StrategyCtor;
         strategyOptions: StrategyOptions;

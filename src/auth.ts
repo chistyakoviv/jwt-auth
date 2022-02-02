@@ -18,7 +18,9 @@ export class Auth {
     constructor(authOptions: AuthOptions) {
         const options: AuthOptions = { ...deufaultOptions, ...authOptions };
 
-        this.storage = new AggregatorStorage(options.storages);
+        this.storage = new AggregatorStorage(
+            options.storages.map((s) => new s.storage(s.storageOptions)),
+        );
         options.strategies.forEach((s) => {
             this.strategies[s.strategyOptions.name] = new s.strategy(
                 this,

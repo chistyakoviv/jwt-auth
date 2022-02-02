@@ -1,3 +1,7 @@
+export interface StorageOptions {
+    prefix: string;
+}
+
 export interface Storage {
     set<V>(key: string, value: V): V;
 
