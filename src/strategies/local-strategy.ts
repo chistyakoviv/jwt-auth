@@ -26,7 +26,7 @@ export interface LocalStrategyOptions extends TokenableStrategyOptions {
     scope: string[] | false;
 }
 
-const DEFAULTS: LocalStrategyOptions = {
+export const DEFAULTS: LocalStrategyOptions = {
     name: 'local',
     endpoints: {
         login: {

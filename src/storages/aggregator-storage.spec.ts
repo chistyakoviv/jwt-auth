@@ -1,30 +1,15 @@
 import { AggregatorStorage } from './aggregator-storage';
-import { CookieStorage } from './cookie-storage';
+import {
+    StorageMock,
+    mockGet,
+    mockSet,
+    mockSync,
+    mockRemove,
+} from './storage.mock';
 import { Storage } from '../types/storage';
 
-const mockGet = jest.fn();
-const mockSet = jest.fn();
-const mockSync = jest.fn();
-const mockRemove = jest.fn();
-
-jest.mock('./cookie-storage', () => {
-    return {
-        CookieStorage: jest.fn().mockImplementation(() => {
-            return {
-                get: mockGet,
-                set: mockSet,
-                sync: mockSync,
-                remove: mockRemove,
-            };
-        }),
-    };
-});
-
 describe('Aggregator storage', () => {
-    const MockCookieStorage = CookieStorage as jest.MockedClass<
-        typeof CookieStorage
-    >;
-    const storageMock: Storage = new MockCookieStorage();
+    const storageMock: Storage = new StorageMock();
     const storageKey = 'strategy';
     const storageValue = 'local';
 
@@ -33,7 +18,6 @@ describe('Aggregator storage', () => {
         mockGet.mockClear();
         mockSync.mockClear();
         mockRemove.mockClear();
-        MockCookieStorage.mockClear();
     });
 
     it('Sets value', () => {
@@ -47,7 +31,7 @@ describe('Aggregator storage', () => {
     it('Gets value', () => {
         const storage = new AggregatorStorage([storageMock]);
 
-        mockGet.mockImplementation((key) => storageValue);
+        mockGet.mockImplementation(() => storageValue);
 
         const value = storage.get(storageKey);
 
@@ -58,7 +42,7 @@ describe('Aggregator storage', () => {
     it('Syncs value', () => {
         const storage = new AggregatorStorage([storageMock]);
 
-        mockGet.mockImplementation((key) => storageValue);
+        mockGet.mockImplementation(() => storageValue);
 
         const value = storage.sync(storageKey);
 

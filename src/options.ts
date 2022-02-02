@@ -22,7 +22,7 @@ export interface AuthOptions {
         logout: string;
         home: string;
     };
-    httpClient: HTTPClientCtor;
+    httpClient?: HTTPClientCtor;
     defaultStrategy?: string;
     storages: {
         storage: StorageCtor;
@@ -34,7 +34,7 @@ export interface AuthOptions {
     }[];
 }
 
-export const deufaultOptions: AuthOptions = {
+export const defaultOptions: AuthOptions = {
     redirect: {
         login: '/login',
         logout: '/logout',

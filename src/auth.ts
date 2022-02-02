@@ -1,7 +1,8 @@
-import { AuthOptions, deufaultOptions } from './options';
+import { AuthOptions, defaultOptions } from './options';
 import { AggregatorStorage } from './storages/aggregator-storage';
 import { Strategy, StrategyCheck } from './types/strategy';
 import { HTTPClient, HTTPResponse } from './types/http';
+import { AxiosAdapter } from './http/axios-adapter';
 
 export type ErrorListener = (...args: unknown[]) => void;
 
@@ -15,9 +16,11 @@ export class Auth {
     public storage: AggregatorStorage;
 
     constructor(authOptions: AuthOptions) {
-        const options: AuthOptions = { ...deufaultOptions, ...authOptions };
+        const options: AuthOptions = { ...defaultOptions, ...authOptions };
 
-        this.httpClient = new options.httpClient();
+        this.httpClient = options.httpClient
+            ? new options.httpClient()
+            : new AxiosAdapter();
         this.storage = new AggregatorStorage(
             options.storages.map((s) => new s.storage(s.storageOptions)),
         );
