@@ -2,8 +2,8 @@ import { Token } from './token';
 import { CookieStorage } from '../storages/cookie-storage';
 import { LocalStrategy } from '../strategies/local-strategy';
 import { Auth } from '../auth';
-import { TokenableStrategy } from '../types/strategy';
-import { Storage } from '../types/storage';
+import type { TokenableStrategy } from '../types/strategy';
+import type { Storage } from '../types/storage';
 import { TokenStatus } from './token-status';
 
 describe('Token', () => {
@@ -19,7 +19,11 @@ describe('Token', () => {
 
     beforeEach(async () => {
         auth = new Auth({
-            storages: [new CookieStorage()],
+            storages: [
+                {
+                    storage: CookieStorage,
+                },
+            ],
             strategies: [
                 {
                     strategy: LocalStrategy,
@@ -37,7 +41,7 @@ describe('Token', () => {
         storage = auth.storage;
     });
 
-    it('Sets token', () => {
+    it.only('Sets token', () => {
         const token = new Token(strategy, storage);
         const EXPECT_TOKEN_VALUE = `${strategy.options.token.type} ${VALID_TOKEN}`;
         const setHeaderSpy = jest.spyOn(
