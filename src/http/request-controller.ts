@@ -14,22 +14,18 @@ export class RequestController {
 
     setHeader(token: string): void {
         if (this.strategy.options.token.global) {
-            this.httpClient.defaults.headers.common[
-                this.strategy.options.token.name
-            ] = token;
+            this.httpClient.setHeader(this.strategy.options.token.name, token);
         }
     }
 
     clearHeader(): void {
         if (this.strategy.options.token.global) {
-            this.httpClient.defaults.headers.common[
-                this.strategy.options.token.name
-            ] = false;
+            this.httpClient.setHeader(this.strategy.options.token.name, false);
         }
     }
 
     initializeRequestInterceptor(refreshEndpoint?: string): void {
-        this.interceptor = this.httpClient.interceptors.request.use(
+        this.interceptor = this.httpClient.injectRequestInterceptor(
             async (config: any) => {
                 // Don't intercept refresh token requests
                 if (
@@ -74,7 +70,13 @@ export class RequestController {
                 if (!isValid) {
                     // The authorization header in the current request is expired.
                     // Token was deleted right before this request
-                    if (!token && this._requestHasAuthorizationHeader(config)) {
+                    if (
+                        !token &&
+                        // check if request has authorization header
+                        this.httpClient.hasHeader(
+                            this.strategy.options.token.name,
+                        )
+                    ) {
                         throw new ExpiredAuthSessionError();
                     }
 
@@ -87,7 +89,7 @@ export class RequestController {
     }
 
     reset(): void {
-        this.httpClient.interceptors.request.eject(this.interceptor as number);
+        this.httpClient.ejectRequestInterceptor(this.interceptor as number);
         this.interceptor = null;
     }
 
@@ -109,9 +111,5 @@ export class RequestController {
         }
 
         return config;
-    }
-
-    private _requestHasAuthorizationHeader(config: any): boolean {
-        return !!config.headers.common[this.strategy.options.token.name];
     }
 }

@@ -1,8 +1,8 @@
-import { HttpRequest, HttpResponse } from './http';
+import { HTTPRequest, HTTPResponse } from './http';
 import { Token } from '../tokens/token';
 import { RefreshToken } from '../tokens/refresh-token';
-import { RequestController } from '../controllers/request-controller';
-import { RefreshController } from '../controllers/refresh-controller';
+import { RequestController } from '../http/request-controller';
+import { RefreshController } from '../http/refresh-controller';
 import { Auth } from '../auth';
 
 export interface UserOptions {
@@ -11,7 +11,7 @@ export interface UserOptions {
 }
 
 export interface EndpointsOption {
-    [endpoint: string]: string | HttpRequest | false;
+    [endpoint: string]: string | HTTPRequest | false;
 }
 
 export interface TokenOptions {
@@ -72,14 +72,14 @@ export interface Strategy<OptionsT extends StrategyOptions = StrategyOptions> {
     auth: Auth;
     options: OptionsT;
     check(checkStatus: boolean): StrategyCheck;
-    login(...args: any[]): Promise<HttpResponse | void>;
-    fetchUser(endpoint?: HttpRequest): Promise<HttpResponse | void>;
+    login(...args: any[]): Promise<HTTPResponse | void>;
+    fetchUser(endpoint?: HTTPRequest): Promise<HTTPResponse | void>;
     setUserToken?(
         token: string | boolean,
         refreshToken?: string | boolean,
-    ): Promise<HttpResponse | void>;
-    init(): Promise<HttpResponse | void>;
-    logout(endpoint?: HttpRequest): Promise<void> | void;
+    ): Promise<HTTPResponse | void>;
+    init(): Promise<HTTPResponse | void>;
+    logout(endpoint?: HTTPRequest): Promise<void> | void;
     reset(options?: { resetInterceptor: boolean }): void;
 }
 
@@ -88,5 +88,5 @@ export interface RefreshableStrategy<
 > extends TokenableStrategy<OptionsT> {
     refreshToken: RefreshToken;
     refreshController: RefreshController;
-    refreshTokens(): Promise<HttpResponse | void>;
+    refreshTokens(): Promise<HTTPResponse | void>;
 }

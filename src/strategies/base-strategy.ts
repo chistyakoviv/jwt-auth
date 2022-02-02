@@ -1,5 +1,5 @@
 import { Auth } from '../auth';
-import { HttpRequest, HttpResponse } from '../types/http';
+import { HTTPRequest, HTTPResponse } from '../types/http';
 import { Strategy, StrategyCheck, StrategyOptions } from '../types/strategy';
 
 export class BaseStrategy<OptionsT extends StrategyOptions>
@@ -10,15 +10,15 @@ export class BaseStrategy<OptionsT extends StrategyOptions>
         public readonly options: OptionsT,
     ) {}
 
-    init(): Promise<HttpResponse | void> {
+    init(): Promise<HTTPResponse | void> {
         return Promise.resolve();
     }
 
-    async login(...args: unknown[]): Promise<HttpResponse | void> {
+    async login(...args: unknown[]): Promise<HTTPResponse | void> {
         return Promise.resolve();
     }
 
-    async fetchUser(): Promise<HttpResponse | void> {
+    async fetchUser(): Promise<HTTPResponse | void> {
         return Promise.resolve();
     }
 
@@ -30,7 +30,7 @@ export class BaseStrategy<OptionsT extends StrategyOptions>
         return { valid: false };
     }
 
-    logout(endpoint?: HttpRequest): void | Promise<void> {
+    logout(endpoint?: HTTPRequest): void | Promise<void> {
         return;
     }
 }

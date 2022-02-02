@@ -1,8 +1,7 @@
 import { AuthOptions, deufaultOptions } from './options';
 import { AggregatorStorage } from './storages/aggregator-storage';
-import axios from 'axios';
 import { Strategy, StrategyCheck } from './types/strategy';
-import { HttpResponse } from './types/http';
+import { HTTPClient, HTTPResponse } from './types/http';
 
 export type ErrorListener = (...args: unknown[]) => void;
 
@@ -12,12 +11,13 @@ export class Auth {
     private defaultStrategy: string;
     private errorListeners: ErrorListener[] = [];
 
-    public httpClient = axios;
+    public httpClient: HTTPClient;
     public storage: AggregatorStorage;
 
     constructor(authOptions: AuthOptions) {
         const options: AuthOptions = { ...deufaultOptions, ...authOptions };
 
+        this.httpClient = new options.httpClient();
         this.storage = new AggregatorStorage(
             options.storages.map((s) => new s.storage(s.storageOptions)),
         );
@@ -35,7 +35,7 @@ export class Auth {
         // this.init();
     }
 
-    init(): Promise<HttpResponse | void> {
+    init(): Promise<HTTPResponse | void> {
         this.storage.sync('strategy');
 
         // Set default strategy if current one is invalid
@@ -63,7 +63,7 @@ export class Auth {
         return this.strategies[strategy];
     }
 
-    setStrategy(name: string): Promise<HttpResponse | void> {
+    setStrategy(name: string): Promise<HTTPResponse | void> {
         if (name === this.storage.get('strategy')) {
             return Promise.resolve();
         }
@@ -78,11 +78,11 @@ export class Auth {
         return Promise.resolve();
     }
 
-    loginWith(name: string, ...args: any[]): Promise<HttpResponse | void> {
+    loginWith(name: string, ...args: any[]): Promise<HTTPResponse | void> {
         return this.setStrategy(name).then(() => this.login(...args));
     }
 
-    login(...args: any[]): Promise<HttpResponse | void> {
+    login(...args: any[]): Promise<HTTPResponse | void> {
         if (!this.getStrategy().login) {
             return Promise.resolve();
         }
@@ -95,7 +95,7 @@ export class Auth {
             });
     }
 
-    fetchUser(...args: any[]): Promise<HttpResponse | void> {
+    fetchUser(...args: any[]): Promise<HTTPResponse | void> {
         if (!this.getStrategy().fetchUser) {
             return Promise.resolve();
         }
@@ -132,7 +132,7 @@ export class Auth {
         return this.getStrategy().check(...(args as [checkStatus: boolean]));
     }
 
-    fetchUserOnce(...args: any[]): Promise<HttpResponse | void> {
+    fetchUserOnce(...args: any[]): Promise<HTTPResponse | void> {
         if (!this.state.user) {
             return this.fetchUser(...args);
         }

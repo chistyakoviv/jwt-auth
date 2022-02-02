@@ -1,7 +1,7 @@
 import { Auth } from '../auth';
-import { RequestController } from '../controllers/request-controller';
+import { RequestController } from '../http/request-controller';
 import { Token } from '../tokens/token';
-import { HttpRequest, HttpResponse } from '../types/http';
+import { HTTPRequest, HTTPResponse } from '../types/http';
 import type {
     EndpointsOption,
     StrategyCheck,
@@ -13,9 +13,9 @@ import { getProp } from '../utils';
 import { BaseStrategy } from './base-strategy';
 
 export interface LocalStrategyEndpoints extends EndpointsOption {
-    login: HttpRequest;
-    logout: HttpRequest | false;
-    user: HttpRequest | false;
+    login: HTTPRequest;
+    logout: HTTPRequest | false;
+    user: HTTPRequest | false;
 }
 
 export interface LocalStrategyOptions extends TokenableStrategyOptions {
@@ -75,7 +75,7 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
         this.requestController = new RequestController(this);
     }
 
-    init(): Promise<HttpResponse | void> {
+    init(): Promise<HTTPResponse | void> {
         this.initializeRequestInterceptor();
 
         return this.auth.fetchUserOnce();
@@ -110,9 +110,9 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
     }
 
     async login(
-        endpoint: HttpRequest,
+        endpoint: HTTPRequest,
         { reset = true } = {},
-    ): Promise<HttpResponse | void> {
+    ): Promise<HTTPResponse | void> {
         if (!this.options.endpoints.login) {
             return;
         }
@@ -145,13 +145,13 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
         return response;
     }
 
-    setUserToken(token: string): Promise<HttpResponse | void> {
+    setUserToken(token: string): Promise<HTTPResponse | void> {
         this.token.set(token);
 
         return this.fetchUser();
     }
 
-    fetchUser(endpoint?: HttpRequest): Promise<HttpResponse | void> {
+    fetchUser(endpoint?: HTTPRequest): Promise<HTTPResponse | void> {
         if (!this.check().valid) {
             return Promise.resolve();
         }
@@ -167,7 +167,7 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
         // Try to fetch user and then set
         return this.auth.httpClient
             .request(reqeustData)
-            .then((response: HttpResponse) => {
+            .then((response: HTTPResponse) => {
                 const userData = getProp(
                     response.data,
                     this.options.user.property,
@@ -189,7 +189,7 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
             });
     }
 
-    async logout(endpoint: HttpRequest = {}): Promise<void> {
+    async logout(endpoint: HTTPRequest = {}): Promise<void> {
         const reqeustData = { ...endpoint, ...this.options.endpoints.logout };
 
         if (this.options.endpoints.logout) {
@@ -208,7 +208,7 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
         }
     }
 
-    protected updateTokens(response: HttpResponse): void {
+    protected updateTokens(response: HTTPResponse): void {
         const token = this.options.token.required
             ? (getProp(response.data, this.options.token.property) as string)
             : true;

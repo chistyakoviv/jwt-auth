@@ -1,16 +1,16 @@
-import type { HttpResponse } from '../types/http';
+import type { HTTPResponse } from '../types/http';
 import type { RefreshableStrategy } from '../types/strategy';
 import type { Auth } from '../auth';
 
 export class RefreshController {
     public auth: Auth;
-    private _refreshPromise: Promise<HttpResponse | void> = null;
+    private _refreshPromise: Promise<HTTPResponse | void> = null;
 
     constructor(private strategy: RefreshableStrategy) {
         this.auth = strategy.auth;
     }
 
-    handleRefresh(): Promise<HttpResponse | void> {
+    handleRefresh(): Promise<HTTPResponse | void> {
         if (this._refreshPromise) {
             return this._refreshPromise;
         }
@@ -18,7 +18,7 @@ export class RefreshController {
         return this._doRefresh();
     }
 
-    private _doRefresh(): Promise<HttpResponse | void> {
+    private _doRefresh(): Promise<HTTPResponse | void> {
         this._refreshPromise = new Promise((resolve, reject) => {
             this.strategy
                 .refreshTokens()
