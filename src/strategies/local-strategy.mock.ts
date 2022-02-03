@@ -10,7 +10,6 @@ export const mockReset = jest.fn();
 export const mockCheck = jest.fn();
 export const mockLogout = jest.fn();
 export const mockAuth = jest.fn();
-export const mockRequestController = jest.fn();
 
 export const LocalStrategyMock = jest.fn().mockImplementation((options) => {
     const strategy: any = {

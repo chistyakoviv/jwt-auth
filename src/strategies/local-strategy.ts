@@ -8,6 +8,7 @@ import type {
     TokenableStrategy,
     TokenableStrategyOptions,
     UserOptions,
+    StrategyPartialOptions,
 } from '../types/strategy';
 import { getProp } from '../utils';
 import { BaseStrategy } from './base-strategy';

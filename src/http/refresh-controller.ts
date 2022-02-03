@@ -4,34 +4,34 @@ import type { Auth } from '../auth';
 
 export class RefreshController {
     public auth: Auth;
-    private _refreshPromise: Promise<HTTPResponse | void> = null;
+    private refreshPromise: Promise<HTTPResponse | void> | null = null;
 
     constructor(private strategy: RefreshableStrategy) {
         this.auth = strategy.auth;
     }
 
     handleRefresh(): Promise<HTTPResponse | void> {
-        if (this._refreshPromise) {
-            return this._refreshPromise;
+        if (this.refreshPromise) {
+            return this.refreshPromise;
         }
 
         return this._doRefresh();
     }
 
     private _doRefresh(): Promise<HTTPResponse | void> {
-        this._refreshPromise = new Promise((resolve, reject) => {
+        this.refreshPromise = new Promise((resolve, reject) => {
             this.strategy
                 .refreshTokens()
                 .then((response) => {
-                    this._refreshPromise = null;
+                    this.refreshPromise = null;
                     resolve(response);
                 })
                 .catch((error) => {
-                    this._refreshPromise = null;
+                    this.refreshPromise = null;
                     reject(error);
                 });
         });
 
-        return this._refreshPromise;
+        return this.refreshPromise;
     }
 }
