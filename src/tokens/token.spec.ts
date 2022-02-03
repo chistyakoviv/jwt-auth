@@ -30,6 +30,11 @@ describe('Token', () => {
         strategy.options.token.expirationPrefix + strategy.options.name;
 
     beforeEach(async () => {
+        mockSetHeader.mockClear();
+        mockSet.mockClear();
+        mockGet.mockClear();
+        mockSync.mockClear();
+        mockClearHeader.mockClear();
         AuthMock.mockClear();
         LocalStrategyMock.mockClear();
     });
