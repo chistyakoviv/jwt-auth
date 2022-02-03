@@ -1,29 +1,35 @@
 import jwtDecode from 'jwt-decode';
 import type { JwtPayload } from 'jwt-decode';
-import type { RefreshableScheme } from '../types';
-import type { Storage } from '../core';
+import type { Storage } from '../types/storage';
 import { addTokenPrefix } from '../utils';
 import { TokenStatus } from './token-status';
+import type { RefreshableStrategy } from '../types/strategy';
 
 export class RefreshToken {
-    public scheme: RefreshableScheme;
-    public $storage: Storage;
+    private strategyKey: string;
+    private expirationKey: string;
 
-    constructor(scheme: RefreshableScheme, storage: Storage) {
-        this.scheme = scheme;
-        this.$storage = storage;
+    constructor(
+        private readonly strategy: RefreshableStrategy,
+        private readonly storage: Storage,
+    ) {
+        this.strategyKey =
+            this.strategy.options.refreshToken.prefix +
+            this.strategy.options.name;
+
+        this.expirationKey =
+            this.strategy.options.refreshToken.expirationPrefix +
+            this.strategy.options.name;
     }
 
     get(): string | boolean {
-        const _key = this.scheme.options.refreshToken.prefix + this.scheme.name;
-
-        return this.$storage.getUniversal(_key) as string | boolean;
+        return this.storage.get(this.strategyKey) as string | boolean;
     }
 
     set(tokenValue: string | boolean): string | boolean {
         const refreshToken = addTokenPrefix(
             tokenValue,
-            this.scheme.options.refreshToken.type,
+            this.strategy.options.refreshToken.type,
         );
 
         this._setToken(refreshToken);
@@ -49,27 +55,17 @@ export class RefreshToken {
     }
 
     private _getExpiration(): number | false {
-        const _key =
-            this.scheme.options.refreshToken.expirationPrefix +
-            this.scheme.name;
-
-        return this.$storage.getUniversal(_key) as number | false;
+        return this.storage.get(this.expirationKey) as number | false;
     }
 
     private _setExpiration(expiration: number | false): number | false {
-        const _key =
-            this.scheme.options.refreshToken.expirationPrefix +
-            this.scheme.name;
-
-        return this.$storage.setUniversal(_key, expiration) as number | false;
+        return this.storage.set(this.expirationKey, expiration) as
+            | number
+            | false;
     }
 
     private _syncExpiration(): number | false {
-        const _key =
-            this.scheme.options.refreshToken.expirationPrefix +
-            this.scheme.name;
-
-        return this.$storage.syncUniversal(_key) as number | false;
+        return this.storage.sync(this.expirationKey) as number | false;
     }
 
     private _updateExpiration(
@@ -78,22 +74,19 @@ export class RefreshToken {
         let refreshTokenExpiration;
         const _tokenIssuedAtMillis = Date.now();
         const _tokenTTLMillis =
-            Number(this.scheme.options.refreshToken.maxAge) * 1000;
+            Number(this.strategy.options.refreshToken.maxAge) * 1000;
         const _tokenExpiresAtMillis = _tokenTTLMillis
             ? _tokenIssuedAtMillis + _tokenTTLMillis
             : 0;
 
         try {
-            refreshTokenExpiration =
-                jwtDecode<JwtPayload>(refreshToken + '').exp * 1000 ||
-                _tokenExpiresAtMillis;
-        } catch (error) {
+            const exp = jwtDecode<JwtPayload>(refreshToken + '').exp;
+            refreshTokenExpiration = exp ? exp * 1000 : _tokenExpiresAtMillis;
+        } catch (error: any) {
             // If the token is not jwt, we can't decode and refresh it, use _tokenExpiresAt value
             refreshTokenExpiration = _tokenExpiresAtMillis;
 
-            if (
-                !((error && error.name === 'InvalidTokenError') /* jwtDecode */)
-            ) {
+            if (!(error && error.name === 'InvalidTokenError')) {
                 throw error;
             }
         }
@@ -103,16 +96,12 @@ export class RefreshToken {
     }
 
     private _setToken(refreshToken: string | boolean): string | boolean {
-        const _key = this.scheme.options.refreshToken.prefix + this.scheme.name;
-
-        return this.$storage.setUniversal(_key, refreshToken) as
+        return this.storage.set(this.strategyKey, refreshToken) as
             | string
             | boolean;
     }
 
     private _syncToken(): string | boolean {
-        const _key = this.scheme.options.refreshToken.prefix + this.scheme.name;
-
-        return this.$storage.syncUniversal(_key) as string | boolean;
+        return this.storage.sync(this.strategyKey) as string | boolean;
     }
 }
