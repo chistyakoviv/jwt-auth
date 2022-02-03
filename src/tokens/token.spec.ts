@@ -1,21 +1,21 @@
 import { Token } from './token';
 import {
-    StrategyMock,
+    LocalStrategyMock,
     mockSetHeader,
     mockClearHeader,
-} from '../strategies/strategy.mock';
+    DEFAULTS,
+} from '../strategies/local-strategy.mock';
 import { AuthMock } from '../auth.mock';
 import type { TokenableStrategy } from '../types/strategy';
 import type { Storage } from '../types/storage';
 import { TokenStatus } from './token-status';
-import { DEFAULTS } from '../strategies/local-strategy';
 import { defaultOptions } from '../options';
 import {
-    StorageMock,
+    CookieStorageMock,
     mockSet,
     mockGet,
     mockSync,
-} from '../storages/storage.mock';
+} from '../storages/cookie-storage.mock';
 
 describe('Token', () => {
     const VALID_TOKEN =
@@ -23,15 +23,15 @@ describe('Token', () => {
     const EXPIRATION_TIME = 1643569979120 * 1000;
 
     const auth = new AuthMock(defaultOptions);
-    const strategy: TokenableStrategy = new StrategyMock(auth, DEFAULTS);
-    const storage: Storage = new StorageMock();
+    const strategy: TokenableStrategy = new LocalStrategyMock(auth, DEFAULTS);
+    const storage: Storage = new CookieStorageMock();
     const strategyKey = strategy.options.token.prefix + strategy.options.name;
     const expirationKey =
         strategy.options.token.expirationPrefix + strategy.options.name;
 
     beforeEach(async () => {
         AuthMock.mockClear();
-        StrategyMock.mockClear();
+        LocalStrategyMock.mockClear();
     });
 
     it('Sets token', () => {
@@ -52,7 +52,6 @@ describe('Token', () => {
 
         mockGet.mockImplementation(() => EXPECT_TOKEN_VALUE);
 
-        // Act
         const tokenValue = token.get();
 
         expect(tokenValue).toBe(EXPECT_TOKEN_VALUE);
@@ -65,7 +64,6 @@ describe('Token', () => {
 
         mockSync.mockImplementation(() => EXPECT_TOKEN_VALUE);
 
-        // Act
         const tokenValue = token.sync();
 
         expect(tokenValue).toBe(EXPECT_TOKEN_VALUE);

@@ -5,7 +5,7 @@ export const mockSet = jest.fn();
 export const mockSync = jest.fn();
 export const mockRemove = jest.fn();
 
-export const StorageMock = jest.fn().mockImplementation(() => {
+export const CookieStorageMock = jest.fn().mockImplementation(() => {
     return {
         get: mockGet,
         set: mockSet,

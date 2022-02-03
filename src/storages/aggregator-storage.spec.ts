@@ -1,15 +1,15 @@
 import { AggregatorStorage } from './aggregator-storage';
 import {
-    StorageMock,
+    CookieStorageMock,
     mockGet,
     mockSet,
     mockSync,
     mockRemove,
-} from './storage.mock';
+} from './cookie-storage.mock';
 import { Storage } from '../types/storage';
 
 describe('Aggregator storage', () => {
-    const storageMock: Storage = new StorageMock();
+    const storageMock: Storage = new CookieStorageMock();
     const storageKey = 'strategy';
     const storageValue = 'local';
 
