@@ -62,3 +62,13 @@ export function removeTokenPrefix(
 
     return token.replace(`${tokenType} `, '');
 }
+
+export function cleanObj(obj: Record<string, any>): Record<string, any> {
+    for (const key in obj) {
+        if (obj[key] === undefined) {
+            delete obj[key];
+        }
+    }
+
+    return obj;
+}
