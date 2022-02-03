@@ -1,11 +1,18 @@
+import { RequestController } from './request-controller';
+
 export const mockSetHeader = jest.fn();
 export const mockClearHeader = jest.fn();
 export const mockInitializeRequestInterceptor = jest.fn();
 export const mockReset = jest.fn();
 
-export const requestControllerMock = {
-    setHeader: mockSetHeader,
-    clearHeader: mockClearHeader,
-    initializeRequestInterceptor: mockInitializeRequestInterceptor,
-    reset: mockReset,
-};
+export const RequestControllerMock = jest
+    .fn()
+    .mockImplementation((strategy) => {
+        return {
+            strategy,
+            setHeader: mockSetHeader,
+            clearHeader: mockClearHeader,
+            initializeRequestInterceptor: mockInitializeRequestInterceptor,
+            reset: mockReset,
+        };
+    }) as jest.MockedClass<typeof RequestController>;

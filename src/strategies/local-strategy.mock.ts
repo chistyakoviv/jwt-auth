@@ -1,5 +1,5 @@
 import { LocalStrategy, DEFAULTS } from './local-strategy';
-import { requestControllerMock } from '../http/request-controller.mock';
+import { RequestControllerMock } from '../http/request-controller.mock';
 
 export * from '../http/request-controller.mock';
 export { DEFAULTS } from './local-strategy';
@@ -13,9 +13,8 @@ export const mockAuth = jest.fn();
 export const mockRequestController = jest.fn();
 
 export const LocalStrategyMock = jest.fn().mockImplementation((options) => {
-    return {
+    const strategy: any = {
         auth: mockAuth,
-        requestController: requestControllerMock,
         options: { ...DEFAULTS, ...options },
 
         init: mockInit,
@@ -25,4 +24,7 @@ export const LocalStrategyMock = jest.fn().mockImplementation((options) => {
         check: mockCheck,
         logout: mockLogout,
     };
+    strategy.requestController = new RequestControllerMock(strategy);
+
+    return strategy;
 }) as jest.MockedClass<typeof LocalStrategy>;
