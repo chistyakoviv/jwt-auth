@@ -13,9 +13,6 @@ export class Token {
         private readonly strategy: TokenableStrategy,
         private readonly storage: Storage,
     ) {
-        this.strategy = strategy;
-        this.storage = storage;
-
         this.strategyKey =
             this.strategy.options.token.prefix + this.strategy.options.name;
 
