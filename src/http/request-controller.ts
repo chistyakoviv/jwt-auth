@@ -4,7 +4,7 @@ import { ExpiredAuthSessionError } from '../errors/expired-auth-session-error';
 export class RequestController {
     public strategy: TokenableStrategy | RefreshableStrategy;
     public interceptor: number | null;
-    private httpClient;
+    public httpClient;
 
     constructor(strategy: TokenableStrategy | RefreshableStrategy) {
         this.strategy = strategy;

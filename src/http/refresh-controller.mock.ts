@@ -6,4 +6,4 @@ export const RefreshControllerMock = jest.fn().mockImplementation(() => {
     return {
         handleRefresh: mockHandleRefresh,
     };
-});
+}) as jest.MockedClass<typeof RefreshController>;
