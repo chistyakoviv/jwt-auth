@@ -72,3 +72,7 @@ export function cleanObj(obj: Record<string, any>): Record<string, any> {
 
     return obj;
 }
+
+export function deepCopy(obj: Record<string, any>): Record<string, any> {
+    return JSON.parse(JSON.stringify(obj));
+}
