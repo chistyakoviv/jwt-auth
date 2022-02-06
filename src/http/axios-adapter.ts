@@ -6,7 +6,7 @@ export class AxiosAdapter implements HTTPClient {
         return axios.request(params);
     }
 
-    injectRequestInterceptor(fn: (config: any) => void): number {
+    injectRequestInterceptor(fn: (config: any) => any): number {
         return axios.interceptors.request.use(fn);
     }
 
