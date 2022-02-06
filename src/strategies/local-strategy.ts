@@ -10,7 +10,6 @@ import type {
     UserOptions,
 } from '../types/strategy';
 import { getProp } from '../utils';
-import { BaseStrategy } from './base-strategy';
 
 export interface LocalStrategyEndpoints extends EndpointsOption {
     login: HTTPRequest;
@@ -62,15 +61,14 @@ export const DEFAULTS: LocalStrategyOptions = {
 };
 
 export class LocalStrategy<OptionsT extends LocalStrategyOptions>
-    extends BaseStrategy<OptionsT>
     implements TokenableStrategy
 {
-    public token: Token;
-    public requestController: RequestController;
+    public readonly options: OptionsT;
+    public readonly token: Token;
+    public readonly requestController: RequestController;
 
     constructor(public readonly auth: Auth, options: OptionsT) {
-        super(auth, { ...DEFAULTS, ...options });
-
+        this.options = { ...DEFAULTS, ...options };
         this.token = new Token(this, this.auth.storage);
         this.requestController = new RequestController(this);
     }
