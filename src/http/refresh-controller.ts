@@ -3,10 +3,10 @@ import type { RefreshableStrategy } from '../types/strategy';
 import type { Auth } from '../auth';
 
 export class RefreshController {
-    public auth: Auth;
+    private readonly auth: Auth;
     private refreshPromise: Promise<HTTPResponse | void> | null = null;
 
-    constructor(private strategy: RefreshableStrategy) {
+    constructor(private readonly strategy: RefreshableStrategy) {
         this.auth = strategy.auth;
     }
 
