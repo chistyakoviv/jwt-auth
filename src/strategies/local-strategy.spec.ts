@@ -177,7 +177,7 @@ describe('Local strategy', () => {
 
         mockRequest.mockResolvedValue({ data: { token: '' } });
 
-        const result = await strategy.login({ data: {} });
+        await strategy.login({ data: {} });
 
         expect(mockReset).toHaveBeenCalled();
     });
@@ -189,7 +189,7 @@ describe('Local strategy', () => {
 
         mockRequest.mockResolvedValue({ data: { token: '' } });
 
-        const result = await strategy.login({ data: {} }, { reset: false });
+        await strategy.login({ data: {} }, { reset: false });
 
         expect(mockReset).not.toHaveBeenCalled();
     });
@@ -204,7 +204,7 @@ describe('Local strategy', () => {
 
         mockRequest.mockResolvedValue({ data: { token: '' } });
 
-        const result = await strategy.login({ data: {} });
+        await strategy.login({ data: {} });
 
         expect(mockRequest).toHaveBeenCalledWith({
             url: '/api/auth/login',
@@ -224,7 +224,7 @@ describe('Local strategy', () => {
 
         mockRequest.mockResolvedValue({ data: { token: '' } });
 
-        const result = await strategy.login({ data: {} });
+        await strategy.login({ data: {} });
 
         expect(mockRequest).toHaveBeenCalledWith({
             url: '/api/auth/login',
@@ -245,7 +245,7 @@ describe('Local strategy', () => {
 
         mockRequest.mockResolvedValue({ data: { token: '' } });
 
-        const result = await strategy.login({ data: {} });
+        await strategy.login({ data: {} });
 
         expect(mockRequest).toHaveBeenCalledWith({
             url: '/some/url',
@@ -262,7 +262,7 @@ describe('Local strategy', () => {
         mockRequest.mockResolvedValue({ data: { token: '' } });
         strategy.fetchUser = jest.fn();
 
-        const result = await strategy.login({ data: {} });
+        await strategy.login({ data: {} });
 
         expect(strategy.fetchUser).toHaveBeenCalled();
     });
@@ -279,7 +279,7 @@ describe('Local strategy', () => {
         mockRequest.mockResolvedValue({ data: { token: '' } });
         strategy.fetchUser = jest.fn();
 
-        const result = await strategy.login({ data: {} });
+        await strategy.login({ data: {} });
 
         expect(strategy.fetchUser).not.toHaveBeenCalled();
     });
@@ -291,7 +291,7 @@ describe('Local strategy', () => {
 
         mockRequest.mockResolvedValue({ data: { token: VALID_TOKEN } });
 
-        const result = await strategy.login({ data: {} });
+        await strategy.login({ data: {} });
 
         expect(mockSet).toHaveBeenCalledWith(VALID_TOKEN);
     });
