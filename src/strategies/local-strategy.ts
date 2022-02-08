@@ -131,7 +131,7 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
             endpoint.data.scope = this.options.scope;
         }
 
-        const reqeustData = { ...endpoint, ...this.options.endpoints.login };
+        const reqeustData = { ...this.options.endpoints.login, ...endpoint };
         const response = await this.auth.httpClient.request(reqeustData);
 
         this.updateTokens(response);
@@ -160,7 +160,7 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
             return Promise.resolve();
         }
 
-        const reqeustData = { ...endpoint, ...this.options.endpoints.user };
+        const reqeustData = { ...this.options.endpoints.user, ...endpoint };
 
         // Try to fetch user and then set
         return this.auth.httpClient
