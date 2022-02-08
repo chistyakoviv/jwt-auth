@@ -8,6 +8,8 @@ import {
     mockFetchUserOnce,
     mockReset,
     mockRequest,
+    mockSetUser,
+    mockCallOnError,
 } from '../auth.mock';
 import { defaultOptions } from '../options';
 import { Auth } from '../auth';
@@ -57,6 +59,7 @@ describe('Local strategy', () => {
         mockStatus.mockClear();
         mockReset.mockClear();
         mockRequest.mockClear();
+        mockCallOnError.mockClear();
     });
 
     it('Constructs strategy', () => {
@@ -294,5 +297,139 @@ describe('Local strategy', () => {
         await strategy.login({ data: {} });
 
         expect(mockSet).toHaveBeenCalledWith(VALID_TOKEN);
+    });
+
+    it('Sets new token', async () => {
+        const strategy = new LocalStrategy(auth, {
+            ...DEFAULTS,
+        } as LocalStrategyOptions);
+
+        strategy.fetchUser = jest.fn();
+
+        await strategy.setUserToken(VALID_TOKEN);
+
+        expect(mockSet).toHaveBeenCalledWith(VALID_TOKEN);
+        expect(strategy.fetchUser).toHaveBeenCalled();
+    });
+
+    it('Fetches no user if token is invalid', async () => {
+        const strategy = new LocalStrategy(auth, {
+            ...DEFAULTS,
+        } as LocalStrategyOptions);
+
+        strategy.check = jest
+            .fn()
+            .mockReturnValue({ valid: false, tokenExpired: false });
+
+        const result = await strategy.fetchUser();
+
+        expect(result).toBe(undefined);
+        expect(mockRequest).not.toHaveBeenCalled();
+        expect(mockSetUser).not.toHaveBeenCalled();
+        expect(strategy.check).toHaveBeenCalled();
+    });
+
+    it('Fetches no user if user endpoint is disabled', async () => {
+        const strategy = new LocalStrategy(auth, {
+            ...DEFAULTS,
+            endpoints: {
+                login: false,
+                logout: false,
+                user: false,
+            },
+        } as LocalStrategyOptions);
+
+        strategy.check = jest
+            .fn()
+            .mockReturnValue({ valid: true, tokenExpired: false });
+
+        const result = await strategy.fetchUser();
+
+        expect(result).toBe(undefined);
+        expect(mockRequest).not.toHaveBeenCalled();
+        expect(mockSetUser).toHaveBeenCalledWith({});
+        expect(strategy.check).toHaveBeenCalled();
+    });
+
+    it('Fetches valid user with default endpoint', async () => {
+        const strategy = new LocalStrategy(auth, {
+            ...DEFAULTS,
+        } as LocalStrategyOptions);
+
+        strategy.check = jest
+            .fn()
+            .mockReturnValue({ valid: true, tokenExpired: false });
+        mockRequest.mockResolvedValue({ data: { user: 'test' } });
+
+        const result = await strategy.fetchUser();
+
+        expect(result).toStrictEqual({ data: { user: 'test' } });
+        expect(mockRequest).toHaveBeenCalledWith({
+            url: '/api/auth/user',
+            method: 'get',
+        });
+    });
+
+    it('Fetches valid user with passed endpoint', async () => {
+        const strategy = new LocalStrategy(auth, {
+            ...DEFAULTS,
+        } as LocalStrategyOptions);
+
+        strategy.check = jest
+            .fn()
+            .mockReturnValue({ valid: true, tokenExpired: false });
+        mockRequest.mockResolvedValue({ data: { user: 'test' } });
+
+        const result = await strategy.fetchUser({
+            url: '/user',
+            method: 'post',
+        });
+
+        expect(result).toStrictEqual({ data: { user: 'test' } });
+        expect(mockRequest).toHaveBeenCalledWith({
+            url: '/user',
+            method: 'post',
+        });
+    });
+
+    it('Fetches invalid user', async () => {
+        const strategy = new LocalStrategy(auth, {
+            ...DEFAULTS,
+        } as LocalStrategyOptions);
+
+        strategy.check = jest
+            .fn()
+            .mockReturnValue({ valid: true, tokenExpired: false });
+        mockRequest.mockResolvedValue({ data: {} });
+
+        try {
+            await strategy.fetchUser();
+        } catch (e: any) {
+            expect(e.message).toEqual(
+                `User Data response does not contain field ${DEFAULTS.user.property}`,
+            );
+        }
+        expect(mockCallOnError).toHaveBeenCalled();
+    });
+
+    it('Fetches user when server responds with error', async () => {
+        const strategy = new LocalStrategy(auth, {
+            ...DEFAULTS,
+        } as LocalStrategyOptions);
+
+        strategy.check = jest
+            .fn()
+            .mockReturnValue({ valid: true, tokenExpired: false });
+        mockRequest.mockRejectedValue({
+            status: 500,
+            message: 'Internal server error',
+        });
+
+        try {
+            await strategy.fetchUser();
+        } catch (e: any) {
+            expect(e.message).toEqual('Internal server error');
+        }
+        expect(mockCallOnError).toHaveBeenCalled();
     });
 });
