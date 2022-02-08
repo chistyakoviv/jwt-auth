@@ -33,7 +33,7 @@ export function getProp(
         return holder[propName];
     }
 
-    return holder;
+    return false;
 }
 
 export function addTokenPrefix(
