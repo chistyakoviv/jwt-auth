@@ -188,7 +188,7 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
     }
 
     async logout(endpoint: HTTPRequest = {}): Promise<void> {
-        const reqeustData = { ...endpoint, ...this.options.endpoints.logout };
+        const reqeustData = { ...this.options.endpoints.logout, ...endpoint };
 
         if (this.options.endpoints.logout) {
             await this.auth.httpClient.request(reqeustData);

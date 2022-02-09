@@ -19,6 +19,7 @@ import { RequestController } from '../http/request-controller';
 const mockSync = jest.fn();
 const mockStatus = jest.fn();
 const mockSet = jest.fn();
+const mockTokenReset = jest.fn();
 
 jest.mock('../tokens/token', () => {
     return {
@@ -27,18 +28,21 @@ jest.mock('../tokens/token', () => {
                 sync: mockSync,
                 status: mockStatus,
                 set: mockSet,
+                reset: mockTokenReset,
             };
         }),
     };
 });
 
 const mockInitializeRequestInterceptor = jest.fn();
+const mockControllerReset = jest.fn();
 
 jest.mock('../http/request-controller', () => {
     return {
         RequestController: jest.fn().mockImplementation(() => {
             return {
                 initializeRequestInterceptor: mockInitializeRequestInterceptor,
+                reset: mockControllerReset,
             };
         }),
     };
@@ -50,31 +54,17 @@ describe('Local strategy', () => {
 
     beforeEach(async () => {
         auth = new AuthMock(defaultOptions);
-        AuthMock.mockClear();
-        (Token as jest.Mock).mockClear();
-        (RequestController as jest.Mock).mockClear();
-        mockFetchUserOnce.mockClear();
-        mockInitializeRequestInterceptor.mockClear();
-        mockSync.mockClear();
-        mockStatus.mockClear();
-        mockReset.mockClear();
-        mockRequest.mockClear();
-        mockCallOnError.mockClear();
     });
 
     it('Constructs strategy', () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         expect(Token).toHaveBeenCalledWith(strategy, auth.storage);
         expect(RequestController).toHaveBeenCalledWith(strategy);
     });
 
     it('Initializes strategy', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockFetchUserOnce.mockResolvedValue({ status: 200 });
 
@@ -86,9 +76,7 @@ describe('Local strategy', () => {
     });
 
     it('Checks valid token', () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockSync.mockReturnValue(VALID_TOKEN);
         mockStatus.mockReturnValue({
@@ -106,9 +94,7 @@ describe('Local strategy', () => {
     });
 
     it('Checks expired token', () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockSync.mockReturnValue(VALID_TOKEN);
         mockStatus.mockReturnValue({
@@ -126,9 +112,7 @@ describe('Local strategy', () => {
     });
 
     it('Checks expired token without checking status', () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockSync.mockReturnValue(VALID_TOKEN);
         mockStatus.mockReturnValue({
@@ -146,9 +130,7 @@ describe('Local strategy', () => {
     });
 
     it('Checks empty token', () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockSync.mockReturnValue('');
 
@@ -174,9 +156,7 @@ describe('Local strategy', () => {
     });
 
     it('Logins with reset', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockRequest.mockResolvedValue({ data: { token: '' } });
 
@@ -186,9 +166,7 @@ describe('Local strategy', () => {
     });
 
     it('Logins without reset', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockRequest.mockResolvedValue({ data: { token: '' } });
 
@@ -221,9 +199,7 @@ describe('Local strategy', () => {
     });
 
     it('Logins without client_id, grant_type, scope', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockRequest.mockResolvedValue({ data: { token: '' } });
 
@@ -258,9 +234,7 @@ describe('Local strategy', () => {
     });
 
     it('Logins with autofetching user', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockRequest.mockResolvedValue({ data: { token: '' } });
         strategy.fetchUser = jest.fn();
@@ -288,9 +262,7 @@ describe('Local strategy', () => {
     });
 
     it('Logins and sets token', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         mockRequest.mockResolvedValue({ data: { token: VALID_TOKEN } });
 
@@ -300,9 +272,7 @@ describe('Local strategy', () => {
     });
 
     it('Sets new token', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         strategy.fetchUser = jest.fn();
 
@@ -313,9 +283,7 @@ describe('Local strategy', () => {
     });
 
     it('Fetches no user if token is invalid', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         strategy.check = jest
             .fn()
@@ -352,9 +320,7 @@ describe('Local strategy', () => {
     });
 
     it('Fetches valid user with default endpoint', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         strategy.check = jest
             .fn()
@@ -371,9 +337,7 @@ describe('Local strategy', () => {
     });
 
     it('Fetches valid user with passed endpoint', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         strategy.check = jest
             .fn()
@@ -393,9 +357,7 @@ describe('Local strategy', () => {
     });
 
     it('Fetches invalid user', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         strategy.check = jest
             .fn()
@@ -412,10 +374,8 @@ describe('Local strategy', () => {
         expect(mockCallOnError).toHaveBeenCalled();
     });
 
-    it('Fetches user when server responds with error', async () => {
-        const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
-        } as LocalStrategyOptions);
+    it('Throws error on fetching user when server responds with error', async () => {
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
 
         strategy.check = jest
             .fn()
@@ -431,5 +391,72 @@ describe('Local strategy', () => {
             expect(e.message).toEqual('Internal server error');
         }
         expect(mockCallOnError).toHaveBeenCalled();
+    });
+
+    it('Logouts with default settings', async () => {
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
+
+        mockRequest.mockResolvedValue({ data: {} });
+
+        await strategy.logout();
+
+        expect(mockReset).toHaveBeenCalled();
+        expect(mockRequest).toHaveBeenCalledWith({
+            url: '/api/auth/logout',
+            method: 'post',
+        });
+    });
+
+    it('Logouts with custom settings', async () => {
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
+
+        mockRequest.mockResolvedValue({ data: {} });
+
+        await strategy.logout({
+            url: '/logout',
+            method: 'get',
+        });
+
+        expect(mockReset).toHaveBeenCalled();
+        expect(mockRequest).toHaveBeenCalledWith({
+            url: '/logout',
+            method: 'get',
+        });
+    });
+
+    it('Does not logout when logout is disabled', async () => {
+        const strategy = new LocalStrategy(auth, {
+            ...DEFAULTS,
+            endpoints: {
+                login: false,
+                logout: false,
+                user: false,
+            },
+        } as LocalStrategyOptions);
+
+        await strategy.logout();
+
+        expect(mockReset).toHaveBeenCalled();
+        expect(mockRequest).not.toHaveBeenCalled();
+    });
+
+    it('Resets with resetting interceptor', () => {
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
+
+        strategy.reset();
+
+        expect(mockSetUser).toHaveBeenCalledWith(false);
+        expect(mockTokenReset).toHaveBeenCalled();
+        expect(mockControllerReset).toHaveBeenCalled();
+    });
+
+    it('Resets without resetting interceptor', () => {
+        const strategy = new LocalStrategy(auth, {} as LocalStrategyOptions);
+
+        strategy.reset({ resetInterceptor: false });
+
+        expect(mockSetUser).toHaveBeenCalledWith(false);
+        expect(mockTokenReset).toHaveBeenCalled();
+        expect(mockControllerReset).not.toHaveBeenCalled();
     });
 });
