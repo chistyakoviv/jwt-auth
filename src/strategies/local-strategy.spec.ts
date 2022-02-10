@@ -146,9 +146,10 @@ describe('Local strategy', () => {
 
     it('Logins with turned off login endpoint', async () => {
         const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
             endpoints: { login: false, logout: false, user: false },
-        } as LocalStrategyOptions);
+        } as unknown as LocalStrategyOptions);
+
+        mockRequest.mockResolvedValue({ data: {} });
 
         const result = await strategy.login({ data: {} });
 
@@ -177,7 +178,6 @@ describe('Local strategy', () => {
 
     it('Logins with client_id, grant_type, scope', async () => {
         const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
             clientId: 'clientId',
             grantType: 'grantType',
             scope: 'scope',
@@ -214,7 +214,6 @@ describe('Local strategy', () => {
 
     it('Logins with custom url and method', async () => {
         const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
             endpoints: {
                 login: { method: 'get', url: '/some/url' },
                 logout: false,
@@ -246,7 +245,6 @@ describe('Local strategy', () => {
 
     it('Logins without autofetching user', async () => {
         const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
             user: {
                 property: 'user',
                 autoFetch: false,
@@ -299,13 +297,12 @@ describe('Local strategy', () => {
 
     it('Fetches no user if user endpoint is disabled', async () => {
         const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
             endpoints: {
                 login: false,
                 logout: false,
                 user: false,
             },
-        } as LocalStrategyOptions);
+        } as unknown as LocalStrategyOptions);
 
         strategy.check = jest
             .fn()
@@ -426,13 +423,12 @@ describe('Local strategy', () => {
 
     it('Does not logout when logout is disabled', async () => {
         const strategy = new LocalStrategy(auth, {
-            ...DEFAULTS,
             endpoints: {
                 login: false,
                 logout: false,
                 user: false,
             },
-        } as LocalStrategyOptions);
+        } as unknown as LocalStrategyOptions);
 
         await strategy.logout();
 
