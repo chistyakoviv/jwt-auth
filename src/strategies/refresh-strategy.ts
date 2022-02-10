@@ -6,7 +6,7 @@ import type {
     RefreshableStrategyOptions,
     StrategyPartialOptions,
 } from '../types/strategy';
-import { getProp, cleanObj } from '../utils';
+import { getProp, cleanObj, merge } from '../utils';
 import { RefreshController } from '../http/refresh-controller';
 import { RefreshToken } from '../tokens/refresh-token';
 import { ExpiredAuthSessionError } from '../errors/expired-auth-session-error';
@@ -55,7 +55,7 @@ export class RefreshStrategy<OptionsT extends RefreshStrategyOptions>
     public refreshController: RefreshController;
 
     constructor(public readonly auth: Auth, options: OptionsT) {
-        super(auth, { ...DEFAULTS, ...options });
+        super(auth, merge(options, DEFAULTS));
 
         this.refreshToken = new RefreshToken(this, this.auth.storage);
         this.refreshController = new RefreshController(this);
@@ -152,7 +152,7 @@ export class RefreshStrategy<OptionsT extends RefreshStrategyOptions>
 
         cleanObj(endpoint.data);
 
-        const reqeustData = { ...endpoint, ...this.options.endpoints.refresh };
+        const reqeustData = { ...this.options.endpoints.refresh, ...endpoint };
 
         return this.auth.httpClient
             .request(reqeustData)
