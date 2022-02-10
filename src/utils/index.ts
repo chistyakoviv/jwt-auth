@@ -76,3 +76,23 @@ export function cleanObj(obj: Record<string, any>): Record<string, any> {
 export function deepCopy(obj: Record<string, any>): Record<string, any> {
     return JSON.parse(JSON.stringify(obj));
 }
+
+export function isObject(val: any) {
+    return val !== null && typeof val === 'object';
+}
+
+export function merge(base: any, defaults: any) {
+    const result = Object.assign({}, defaults);
+
+    for (const key in base) {
+        const val = base[key];
+
+        if (isObject(val) && isObject(result[key])) {
+            result[key] = merge(val, result[key]);
+        } else {
+            result[key] = val;
+        }
+    }
+
+    return result;
+}
