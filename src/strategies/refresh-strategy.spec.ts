@@ -458,146 +458,6 @@ describe('Refresh strategy', () => {
         );
     });
 
-    it('Logins when login endpoint is disabled', async () => {
-        const strategy = new RefreshStrategy(auth, {
-            endpoints: { login: false, logout: false, user: false },
-        } as unknown as RefreshStrategyOptions);
-
-        const result = await strategy.login({ data: {} });
-
-        expect(result).toBe(undefined);
-    });
-
-    it('Logins with reset', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-        mockRequest.mockResolvedValue({ data: { token: '' } });
-
-        await strategy.login({ data: {} });
-
-        expect(mockReset).toHaveBeenCalled();
-    });
-
-    it('Logins without reset', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        mockRequest.mockResolvedValue({ data: { token: '' } });
-
-        await strategy.login({ data: {} }, { reset: false });
-
-        expect(mockReset).not.toHaveBeenCalled();
-    });
-
-    it('Logins with client_id, grant_type, scope', async () => {
-        const strategy = new RefreshStrategy(auth, {
-            ...DEFAULTS,
-            clientId: 'clientId',
-            grantType: 'grantType',
-            scope: 'scope',
-        } as unknown as RefreshStrategyOptions);
-
-        mockRequest.mockResolvedValue({ data: { token: '' } });
-
-        await strategy.login({ data: {} });
-
-        expect(mockRequest).toHaveBeenCalledWith({
-            url: '/api/auth/login',
-            method: 'post',
-            data: {
-                client_id: 'clientId',
-                grant_type: 'grantType',
-                scope: 'scope',
-            },
-        });
-    });
-
-    it('Logins without client_id, grant_type, scope', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        mockRequest.mockResolvedValue({ data: { token: '' } });
-
-        await strategy.login({ data: {} });
-
-        expect(mockRequest).toHaveBeenCalledWith({
-            url: '/api/auth/login',
-            method: 'post',
-            data: {},
-        });
-    });
-
-    it('Logins with custom url and method', async () => {
-        const strategy = new RefreshStrategy(auth, {
-            ...DEFAULTS,
-            endpoints: {
-                login: { method: 'get', url: '/some/url' },
-                logout: false,
-                user: false,
-            },
-        } as RefreshStrategyOptions);
-
-        mockRequest.mockResolvedValue({ data: { token: '' } });
-
-        await strategy.login({ data: {} });
-
-        expect(mockRequest).toHaveBeenCalledWith({
-            url: '/some/url',
-            method: 'get',
-            data: {},
-        });
-    });
-
-    it('Logins with autofetching user', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        mockRequest.mockResolvedValue({ data: { token: '' } });
-        strategy.fetchUser = jest.fn();
-
-        await strategy.login({ data: {} });
-
-        expect(strategy.fetchUser).toHaveBeenCalled();
-    });
-
-    it('Logins without autofetching user', async () => {
-        const strategy = new RefreshStrategy(auth, {
-            ...DEFAULTS,
-            user: {
-                property: 'user',
-                autoFetch: false,
-            },
-        } as RefreshStrategyOptions);
-
-        mockRequest.mockResolvedValue({ data: { token: '' } });
-        strategy.fetchUser = jest.fn();
-
-        await strategy.login({ data: {} });
-
-        expect(strategy.fetchUser).not.toHaveBeenCalled();
-    });
-
-    it('Logins and sets token', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        mockRequest.mockResolvedValue({ data: { token: VALID_TOKEN } });
-
-        await strategy.login({ data: {} });
-
-        expect(mockTokenSet).toHaveBeenCalledWith(VALID_TOKEN);
-    });
-
     it('Sets new token', async () => {
         const strategy = new RefreshStrategy(
             auth,
@@ -609,186 +469,23 @@ describe('Refresh strategy', () => {
         await strategy.setUserToken(VALID_TOKEN);
 
         expect(mockTokenSet).toHaveBeenCalledWith(VALID_TOKEN);
+        expect(mockRefreshTokenSet).not.toHaveBeenCalled();
         expect(strategy.fetchUser).toHaveBeenCalled();
     });
 
-    it('Fetches no user if token is invalid', async () => {
+    it('Sets new token and new refresh token', async () => {
         const strategy = new RefreshStrategy(
             auth,
             {} as RefreshStrategyOptions,
         );
 
-        strategy.check = jest
-            .fn()
-            .mockReturnValue({ valid: false, tokenExpired: false });
+        strategy.fetchUser = jest.fn();
 
-        const result = await strategy.fetchUser();
+        await strategy.setUserToken(VALID_TOKEN, VALID_TOKEN);
 
-        expect(result).toBe(undefined);
-        expect(mockRequest).not.toHaveBeenCalled();
-        expect(mockSetUser).not.toHaveBeenCalled();
-        expect(strategy.check).toHaveBeenCalled();
-    });
-
-    it('Fetches no user if user endpoint is disabled', async () => {
-        const strategy = new RefreshStrategy(auth, {
-            ...DEFAULTS,
-            endpoints: {
-                login: false,
-                logout: false,
-                user: false,
-            },
-        } as unknown as RefreshStrategyOptions);
-
-        strategy.check = jest
-            .fn()
-            .mockReturnValue({ valid: true, tokenExpired: false });
-
-        const result = await strategy.fetchUser();
-
-        expect(result).toBe(undefined);
-        expect(mockRequest).not.toHaveBeenCalled();
-        expect(mockSetUser).toHaveBeenCalledWith({});
-        expect(strategy.check).toHaveBeenCalled();
-    });
-
-    it('Fetches valid user with default endpoint', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        strategy.check = jest
-            .fn()
-            .mockReturnValue({ valid: true, tokenExpired: false });
-        mockRequest.mockResolvedValue({ data: { user: 'test' } });
-
-        const result = await strategy.fetchUser();
-
-        expect(result).toStrictEqual({ data: { user: 'test' } });
-        expect(mockRequest).toHaveBeenCalledWith({
-            url: '/api/auth/user',
-            method: 'get',
-        });
-    });
-
-    it('Fetches valid user with passed endpoint', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        strategy.check = jest
-            .fn()
-            .mockReturnValue({ valid: true, tokenExpired: false });
-        mockRequest.mockResolvedValue({ data: { user: 'test' } });
-
-        const result = await strategy.fetchUser({
-            url: '/user',
-            method: 'post',
-        });
-
-        expect(result).toStrictEqual({ data: { user: 'test' } });
-        expect(mockRequest).toHaveBeenCalledWith({
-            url: '/user',
-            method: 'post',
-        });
-    });
-
-    it('Fetches invalid user', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        strategy.check = jest
-            .fn()
-            .mockReturnValue({ valid: true, tokenExpired: false });
-        mockRequest.mockResolvedValue({ data: {} });
-
-        try {
-            await strategy.fetchUser();
-        } catch (e: any) {
-            expect(e.message).toEqual(
-                `User Data response does not contain field ${LOCAL_DEFAULTS.user.property}`,
-            );
-        }
-        expect(mockCallOnError).toHaveBeenCalled();
-    });
-
-    it('Throws error on fetching user when server responds with error', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        strategy.check = jest
-            .fn()
-            .mockReturnValue({ valid: true, tokenExpired: false });
-        mockRequest.mockRejectedValue({
-            status: 500,
-            message: 'Internal server error',
-        });
-
-        try {
-            await strategy.fetchUser();
-        } catch (e: any) {
-            expect(e.message).toEqual('Internal server error');
-        }
-        expect(mockCallOnError).toHaveBeenCalled();
-    });
-
-    it('Logouts with default settings', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        mockRequest.mockResolvedValue({ data: {} });
-
-        await strategy.logout();
-
-        expect(mockReset).toHaveBeenCalled();
-        expect(mockRequest).toHaveBeenCalledWith({
-            url: '/api/auth/logout',
-            method: 'post',
-        });
-    });
-
-    it('Logouts with custom settings', async () => {
-        const strategy = new RefreshStrategy(
-            auth,
-            {} as RefreshStrategyOptions,
-        );
-
-        mockRequest.mockResolvedValue({ data: {} });
-
-        await strategy.logout({
-            url: '/logout',
-            method: 'get',
-        });
-
-        expect(mockReset).toHaveBeenCalled();
-        expect(mockRequest).toHaveBeenCalledWith({
-            url: '/logout',
-            method: 'get',
-        });
-    });
-
-    it('Does not logout when logout is disabled', async () => {
-        const strategy = new RefreshStrategy(auth, {
-            ...DEFAULTS,
-            endpoints: {
-                login: false,
-                logout: false,
-                user: false,
-            },
-        } as unknown as RefreshStrategyOptions);
-
-        await strategy.logout();
-
-        expect(mockReset).toHaveBeenCalled();
-        expect(mockRequest).not.toHaveBeenCalled();
+        expect(mockTokenSet).toHaveBeenCalledWith(VALID_TOKEN);
+        expect(mockRefreshTokenSet).toHaveBeenCalledWith(VALID_TOKEN);
+        expect(strategy.fetchUser).toHaveBeenCalled();
     });
 
     it('Resets with resetting interceptor', () => {
@@ -801,6 +498,7 @@ describe('Refresh strategy', () => {
 
         expect(mockSetUser).toHaveBeenCalledWith(false);
         expect(mockTokenReset).toHaveBeenCalled();
+        expect(mockRefreshTokenReset).toHaveBeenCalled();
         expect(mockControllerReset).toHaveBeenCalled();
     });
 
@@ -814,6 +512,7 @@ describe('Refresh strategy', () => {
 
         expect(mockSetUser).toHaveBeenCalledWith(false);
         expect(mockTokenReset).toHaveBeenCalled();
+        expect(mockRefreshTokenReset).toHaveBeenCalled();
         expect(mockControllerReset).not.toHaveBeenCalled();
     });
 });
