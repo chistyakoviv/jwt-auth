@@ -5,7 +5,7 @@ import { AxiosAdapter } from './http/axios-adapter';
 import { HTTPClient } from './types/http';
 
 type StrategyCtor = {
-    new (auth: Auth, options: any): Strategy;
+    new (auth: Auth, options: StrategyOptions): Strategy;
 };
 
 type StorageCtor = {
@@ -16,6 +16,16 @@ type HTTPClientCtor = {
     new (): HTTPClient;
 };
 
+type StorageOption = {
+    storage: StorageCtor;
+    storageOptions?: StorageOptions;
+};
+
+type StrategyOption = {
+    strategy: StrategyCtor;
+    strategyOptions: StrategyOptions;
+};
+
 export interface AuthOptions {
     redirect?: {
         login: string;
@@ -24,14 +34,8 @@ export interface AuthOptions {
     };
     httpClient?: HTTPClientCtor;
     defaultStrategy?: string;
-    storages: {
-        storage: StorageCtor;
-        storageOptions?: StorageOptions;
-    }[];
-    strategies: {
-        strategy: StrategyCtor;
-        strategyOptions: StrategyOptions;
-    }[];
+    storages: StorageOption[];
+    strategies: StrategyOption[];
 }
 
 export const defaultOptions: AuthOptions = {

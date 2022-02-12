@@ -15,7 +15,8 @@ export const mockAuth = jest.fn();
 export const LocalStrategyMock = jest
     .fn()
     .mockImplementation((auth: Auth, options) => {
-        const strategy: any = {
+        const strategy = Object.create(LocalStrategyMock.prototype);
+        const methods = {
             auth,
             options: { ...DEFAULTS, ...options },
 
@@ -28,5 +29,5 @@ export const LocalStrategyMock = jest
         };
         strategy.requestController = new RequestControllerMock(strategy);
 
-        return strategy;
+        return Object.assign(strategy, methods);
     }) as jest.MockedClass<typeof LocalStrategy>;

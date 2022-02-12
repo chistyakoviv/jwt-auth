@@ -3,6 +3,7 @@ import { AggregatorStorage } from './storages/aggregator-storage';
 import { Strategy, StrategyCheck } from './types/strategy';
 import { HTTPClient, HTTPResponse } from './types/http';
 import { AxiosAdapter } from './http/axios-adapter';
+import { merge } from './utils';
 
 export type ErrorListener = (...args: unknown[]) => void;
 
@@ -16,8 +17,8 @@ export class Auth {
     public storage: AggregatorStorage;
 
     constructor(authOptions: AuthOptions) {
-        const options: AuthOptions = { ...defaultOptions, ...authOptions };
-
+        const options: AuthOptions = merge(authOptions, defaultOptions);
+        // console.log(options);
         this.httpClient = options.httpClient
             ? new options.httpClient()
             : new AxiosAdapter();
@@ -34,14 +35,11 @@ export class Auth {
             options.defaultStrategy || options.strategies.length
                 ? options.strategies[0].strategyOptions.name
                 : '';
-
-        // this.init();
     }
 
     init(): Promise<HTTPResponse | void> {
         this.storage.sync('strategy');
 
-        // Set default strategy if current one is invalid
         if (!this.getStrategy(false)) {
             this.storage.set('strategy', this.defaultStrategy);
 
