@@ -64,9 +64,9 @@ export class Auth {
         return this.strategies[strategy];
     }
 
-    setStrategy(name: string): Promise<HTTPResponse | void> {
+    setStrategy(name: string): void {
         if (name === this.storage.get('strategy')) {
-            return Promise.resolve();
+            return;
         }
 
         if (!this.strategies[name]) {
@@ -76,18 +76,15 @@ export class Auth {
         this.reset();
         this.storage.set('strategy', name);
 
-        return Promise.resolve();
+        return;
     }
 
     loginWith(name: string, ...args: any[]): Promise<HTTPResponse | void> {
-        return this.setStrategy(name).then(() => this.login(...args));
+        this.setStrategy(name);
+        return this.login(...args);
     }
 
     login(...args: any[]): Promise<HTTPResponse | void> {
-        if (!this.getStrategy().login) {
-            return Promise.resolve();
-        }
-
         return this.getStrategy()
             .login(...args)
             .catch((error) => {
@@ -97,10 +94,6 @@ export class Auth {
     }
 
     fetchUser(...args: any[]): Promise<HTTPResponse | void> {
-        if (!this.getStrategy().fetchUser) {
-            return Promise.resolve();
-        }
-
         return Promise.resolve(this.getStrategy().fetchUser(...args)).catch(
             (error) => {
                 this.callOnError(error, { method: 'fetchUser' });
@@ -110,11 +103,6 @@ export class Auth {
     }
 
     logout(...args: any[]): Promise<void> {
-        if (!this.getStrategy().logout) {
-            this.reset();
-            return Promise.resolve();
-        }
-
         return Promise.resolve(this.getStrategy().logout(...args)).catch(
             (error) => {
                 this.callOnError(error, { method: 'logout' });
@@ -145,7 +133,7 @@ export class Auth {
 
         let check = { valid: Boolean(user) };
 
-        // If user is defined, perform scheme checks.
+        // If user is defined, perform strategy checks.
         if (check.valid) {
             check = this.check();
         }
