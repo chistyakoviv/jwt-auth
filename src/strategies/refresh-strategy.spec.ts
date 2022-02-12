@@ -1,9 +1,4 @@
-import {
-    RefreshStrategy,
-    DEFAULTS,
-    RefreshStrategyOptions,
-} from './refresh-strategy';
-import { DEFAULTS as LOCAL_DEFAULTS } from './local-strategy';
+import { RefreshStrategy, RefreshStrategyOptions } from './refresh-strategy';
 import {
     AuthMock,
     mockFetchUserOnce,

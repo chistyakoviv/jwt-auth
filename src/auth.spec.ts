@@ -44,7 +44,7 @@ describe('Auth', () => {
     } as unknown as AuthOptions;
 
     it('Instantiates Auth', () => {
-        const auth = new Auth({
+        new Auth({
             storages: [
                 {
                     storage: CookieStorageMock,
