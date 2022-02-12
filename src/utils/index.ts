@@ -87,7 +87,9 @@ export function merge(base: any, defaults: any) {
     for (const key in base) {
         const val = base[key];
 
-        if (isObject(val) && isObject(result[key])) {
+        if (Array.isArray(val) && Array.isArray(result[key])) {
+            result[key] = result[key].concat(val);
+        } else if (isObject(val) && isObject(result[key])) {
             result[key] = merge(val, result[key]);
         } else {
             result[key] = val;
