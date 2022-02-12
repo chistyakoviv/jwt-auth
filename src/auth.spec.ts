@@ -407,4 +407,37 @@ describe('Auth', () => {
         expect(result).toStrictEqual(undefined);
         expect(auth.fetchUser).not.toHaveBeenCalled();
     });
+
+    it('Sets valid user', () => {
+        const auth = new Auth(optionsWithDefaultStrategy);
+
+        auth.check = jest.fn().mockReturnValue({ valid: true });
+
+        auth.setUser({ name: 'test' });
+
+        expect(auth.check).toHaveBeenCalled();
+    });
+
+    it('Sets invalid user', () => {
+        const auth = new Auth(optionsWithDefaultStrategy);
+
+        auth.check = jest.fn().mockReturnValue({ valid: true });
+
+        auth.setUser('');
+
+        expect(auth.check).not.toHaveBeenCalled();
+    });
+
+    it('Calls listeners on error', () => {
+        const auth = new Auth(optionsWithDefaultStrategy);
+
+        const errorCallback = jest.fn();
+        const error = new Error('some error');
+
+        auth.onError(errorCallback);
+
+        auth.callOnError(new Error('some error'), { method: 'test' });
+
+        expect(errorCallback).toHaveBeenCalledWith(error, { method: 'test' });
+    });
 });

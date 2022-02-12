@@ -141,10 +141,6 @@ export class Auth {
         this.setState({ loggedIn: check.valid });
     }
 
-    setState(state: Record<string, any>): void {
-        Object.assign(this.state, state);
-    }
-
     onError(listener: ErrorListener): void {
         this.errorListeners.push(listener);
     }
@@ -153,5 +149,9 @@ export class Auth {
         for (const fn of this.errorListeners) {
             fn(error, payload);
         }
+    }
+
+    private setState(state: Record<string, any>): void {
+        Object.assign(this.state, state);
     }
 }
