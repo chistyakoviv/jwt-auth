@@ -1,6 +1,6 @@
 import { Storage } from '../types/storage';
 import { CookieSerializeOptions, parse, serialize } from 'cookie';
-import { decodeValue, encodeValue, isUnset } from '../utils';
+import { decodeValue, encodeValue, isUnset, merge } from '../utils';
 
 export interface CookieStorageOptions {
     prefix: string;
@@ -24,7 +24,7 @@ export class CookieStorage implements Storage {
     private readonly options: CookieStorageOptions;
 
     constructor(options?: CookieStorageOptions) {
-        this.options = { ...DEFAULTS, ...options };
+        this.options = merge(options, DEFAULTS);
     }
 
     set<V>(key: string, value: V): V {
