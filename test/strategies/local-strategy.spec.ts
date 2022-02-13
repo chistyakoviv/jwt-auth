@@ -2,7 +2,7 @@ import {
     LocalStrategy,
     DEFAULTS,
     LocalStrategyOptions,
-} from './local-strategy';
+} from '../../src/strategies/local-strategy';
 import {
     AuthMock,
     mockFetchUserOnce,
@@ -11,17 +11,17 @@ import {
     mockSetUser,
     mockCallOnError,
 } from '../auth.mock';
-import { defaultOptions } from '../options';
-import { Auth } from '../auth';
-import { Token } from '../tokens/token';
-import { RequestController } from '../http/request-controller';
+import { defaultOptions } from '../../src/options';
+import { Auth } from '../../src/auth';
+import { Token } from '../../src/tokens/token';
+import { RequestController } from '../../src/http/request-controller';
 
 const mockSync = jest.fn();
 const mockStatus = jest.fn();
 const mockSet = jest.fn();
 const mockTokenReset = jest.fn();
 
-jest.mock('../tokens/token', () => {
+jest.mock('../../src/tokens/token', () => {
     return {
         Token: jest.fn().mockImplementation(() => {
             return {
@@ -37,7 +37,7 @@ jest.mock('../tokens/token', () => {
 const mockInitializeRequestInterceptor = jest.fn();
 const mockControllerReset = jest.fn();
 
-jest.mock('../http/request-controller', () => {
+jest.mock('../../src/http/request-controller', () => {
     return {
         RequestController: jest.fn().mockImplementation(() => {
             return {

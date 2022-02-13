@@ -1,4 +1,7 @@
-import { RefreshStrategy, RefreshStrategyOptions } from './refresh-strategy';
+import {
+    RefreshStrategy,
+    RefreshStrategyOptions,
+} from '../../src/strategies/refresh-strategy';
 import {
     AuthMock,
     mockFetchUserOnce,
@@ -7,13 +10,13 @@ import {
     mockSetUser,
     mockCallOnError,
 } from '../auth.mock';
-import { defaultOptions } from '../options';
-import { Auth } from '../auth';
-import { Token } from '../tokens/token';
-import { RefreshToken } from '../tokens/refresh-token';
-import { RequestController } from '../http/request-controller';
-import { RefreshController } from '../http/refresh-controller';
-import { ExpiredAuthSessionError } from '../errors/expired-auth-session-error';
+import { defaultOptions } from '../../src/options';
+import { Auth } from '../../src/auth';
+import { Token } from '../../src/tokens/token';
+import { RefreshToken } from '../../src/tokens/refresh-token';
+import { RequestController } from '../../src/http/request-controller';
+import { RefreshController } from '../../src/http/refresh-controller';
+import { ExpiredAuthSessionError } from '../../src/errors/expired-auth-session-error';
 
 const mockTokenSync = jest.fn();
 const mockTokenStatus = jest.fn();
@@ -21,7 +24,7 @@ const mockTokenSet = jest.fn();
 const mockTokenReset = jest.fn();
 const mockTokenGet = jest.fn();
 
-jest.mock('../tokens/token', () => {
+jest.mock('../../src/tokens/token', () => {
     return {
         Token: jest.fn().mockImplementation(() => {
             return {
@@ -41,7 +44,7 @@ const mockRefreshTokenSet = jest.fn();
 const mockRefreshTokenReset = jest.fn();
 const mockRefreshTokenGet = jest.fn();
 
-jest.mock('../tokens/refresh-token', () => {
+jest.mock('../../src/tokens/refresh-token', () => {
     return {
         RefreshToken: jest.fn().mockImplementation(() => {
             return {
@@ -59,7 +62,7 @@ const mockInitializeRequestInterceptor = jest.fn();
 const mockControllerReset = jest.fn();
 const mockControllerClearHeader = jest.fn();
 
-jest.mock('../http/request-controller', () => {
+jest.mock('../../src/http/request-controller', () => {
     return {
         RequestController: jest.fn().mockImplementation(() => {
             return {
@@ -71,7 +74,7 @@ jest.mock('../http/request-controller', () => {
     };
 });
 
-jest.mock('../http/refresh-controller', () => {
+jest.mock('../../src/http/refresh-controller', () => {
     return {
         RefreshController: jest.fn().mockImplementation(() => {
             return {};

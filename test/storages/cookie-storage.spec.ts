@@ -1,4 +1,7 @@
-import { CookieStorage, CookieStorageOptions } from './cookie-storage';
+import {
+    CookieStorage,
+    CookieStorageOptions,
+} from '../../src/storages/cookie-storage';
 
 describe('Cookie storage', () => {
     const cookieName = 'strategy';

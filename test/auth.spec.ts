@@ -1,5 +1,5 @@
-import { Auth } from './auth';
-import { AuthOptions } from './options';
+import { Auth } from '../src/auth';
+import { AuthOptions } from '../src/options';
 import { CookieStorageMock } from './storages/cookie-storage.mock';
 import {
     LocalStrategyMock,
@@ -10,15 +10,15 @@ import {
     mockReset,
     mockCheck,
 } from './strategies/local-strategy.mock';
-import { AggregatorStorage } from './storages/aggregator-storage';
-import { LocalStrategyOptions } from './strategies/local-strategy';
+import { AggregatorStorage } from '../src/storages/aggregator-storage';
+import { LocalStrategyOptions } from '../src/strategies/local-strategy';
 
 const mockStorageSync = jest.fn();
 const mockStorageSet = jest.fn();
 const mockStorageGet = jest.fn();
 const mockStorageRemove = jest.fn();
 
-jest.mock('./storages/aggregator-storage', () => {
+jest.mock('../src/storages/aggregator-storage', () => {
     return {
         AggregatorStorage: jest.fn().mockImplementation(() => {
             return {

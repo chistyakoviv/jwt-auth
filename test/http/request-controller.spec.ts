@@ -11,11 +11,11 @@ import {
     mockInjectRequestInterceptor,
     mockEjectRequestInterceptor,
 } from '../auth.mock';
-import { defaultOptions } from '../options';
-import type { RefreshableStrategy } from '../types/strategy';
-import { RequestController } from './request-controller';
-import { Auth } from '../auth';
-import { deepCopy } from '../utils';
+import { defaultOptions } from '../../src/options';
+import type { RefreshableStrategy } from '../../src/types/strategy';
+import { RequestController } from '../../src/http/request-controller';
+import { Auth } from '../../src/auth';
+import { deepCopy } from '../../src/utils';
 
 describe('Request controller', () => {
     let auth: Auth;

@@ -1,6 +1,6 @@
-export * from './http/axios-adapter.mock';
-import { Auth } from './auth';
-import { AxiosAdapterMock } from './http/axios-adapter.mock';
+export * from '../test/http/axios-adapter.mock';
+import { Auth } from '../src/auth';
+import { AxiosAdapterMock } from '../test/http/axios-adapter.mock';
 
 export const mockInit = jest.fn();
 export const mockGetStrategy = jest.fn();

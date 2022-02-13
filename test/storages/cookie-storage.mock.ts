@@ -1,4 +1,4 @@
-import { CookieStorage } from './cookie-storage';
+import { CookieStorage } from '../../src/storages/cookie-storage';
 
 export const mockGet = jest.fn();
 export const mockSet = jest.fn();

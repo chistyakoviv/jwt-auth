@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { HTTPRequest } from '../types/http';
-import { AxiosAdapter } from './axios-adapter';
+import { HTTPRequest } from '../../src/types/http';
+import { AxiosAdapter } from '../../src/http/axios-adapter';
 
 const mockRequest = jest.fn();
 const mockUse = jest.fn();

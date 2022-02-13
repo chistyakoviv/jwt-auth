@@ -1,4 +1,4 @@
-import { RequestController } from './request-controller';
+import { RequestController } from '../../src/http/request-controller';
 
 export const mockSetHeader = jest.fn();
 export const mockClearHeader = jest.fn();

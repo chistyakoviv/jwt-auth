@@ -1,4 +1,4 @@
-import { RefreshController } from './refresh-controller';
+import { RefreshController } from '../../src/http/refresh-controller';
 
 export const mockHandleRefresh = jest.fn();
 

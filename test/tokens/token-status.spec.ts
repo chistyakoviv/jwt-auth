@@ -1,4 +1,4 @@
-import { TokenStatus } from './token-status';
+import { TokenStatus } from '../../src/tokens/token-status';
 
 describe('Token status', () => {
     const NOT_EXPIRED = Date.now() + 10000;

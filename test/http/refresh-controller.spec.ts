@@ -5,9 +5,9 @@ import {
     RefreshStrategyOptions,
 } from '../strategies/refresh-strategy.mock';
 import { AuthMock } from '../auth.mock';
-import { defaultOptions } from '../options';
-import type { RefreshableStrategy } from '../types/strategy';
-import { RefreshController } from './refresh-controller';
+import { defaultOptions } from '../../src/options';
+import type { RefreshableStrategy } from '../../src/types/strategy';
+import { RefreshController } from '../../src/http/refresh-controller';
 
 describe('Refresh controller', () => {
     const auth = new AuthMock(defaultOptions);

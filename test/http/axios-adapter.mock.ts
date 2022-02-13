@@ -1,4 +1,4 @@
-import { AxiosAdapter } from './axios-adapter';
+import { AxiosAdapter } from '../../src/http/axios-adapter';
 
 export const mockRequest = jest.fn();
 export const mockInjectRequestInterceptor = jest.fn();
