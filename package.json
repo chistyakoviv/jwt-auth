@@ -2,13 +2,11 @@
   "name": "jwt-auth",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/cjs/index.js",
+  "main": "./dist/cjs/auth.js",
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && npm run build:cjs",
     "build:cjs": "tsc -p ./typescript/tsconfig.cjs.json",
-    "build:es5": "tsc -p ./typescript/tsconfig.esm5.json",
-    "build:es2015": "tsc -p ./typescript/tsconfig.esm2015.json",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "jest",
@@ -43,6 +41,8 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.4.7",
     "prettier": "^2.5.1",
+    "rimraf": "^3.0.2",
+    "tslib": "^2.3.1",
     "ts-jest": "^27.1.3",
     "tsconfig-paths": "^3.12.0",
     "typescript": "^4.5.4"
@@ -53,7 +53,10 @@
       "json",
       "ts"
     ],
-    "rootDir": "test",
+    "roots": [
+      "test",
+      "src"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -67,8 +70,6 @@
   },
   "dependencies": {
     "cookie": "^0.4.1",
-    "jwt-decode": "^3.1.2",
-    "rimraf": "^3.0.2",
-    "tslib": "^2.3.1"
+    "jwt-decode": "^3.1.2"
   }
 }
