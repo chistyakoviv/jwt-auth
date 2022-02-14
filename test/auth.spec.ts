@@ -82,6 +82,21 @@ describe('Auth', () => {
         expect(mockInit).toHaveBeenCalled();
     });
 
+    it('Returns nothing when receiving strategy is failed', async () => {
+        const auth = new Auth(optionsWithDefaultStrategy);
+
+        auth.getStrategy = jest.fn().mockImplementation(() => {
+            return false;
+        });
+
+        const result = await auth.init();
+
+        expect(mockStorageSync).toHaveBeenCalled();
+        expect(mockStorageSet).toHaveBeenCalled();
+        expect(mockInit).not.toHaveBeenCalled();
+        expect(result).toBe(undefined);
+    });
+
     it('Inits Auth with default strategy', async () => {
         const auth = new Auth(optionsWithDefaultStrategy);
 
@@ -436,7 +451,7 @@ describe('Auth', () => {
 
         auth.onError(errorCallback);
 
-        auth.callOnError(new Error('some error'), { method: 'test' });
+        auth.callOnError(error, { method: 'test' });
 
         expect(errorCallback).toHaveBeenCalledWith(error, { method: 'test' });
     });
