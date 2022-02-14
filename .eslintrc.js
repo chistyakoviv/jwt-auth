@@ -1,8 +1,7 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    // We can't use this option if tests are located in a separate directory
-    // project: 'tsconfig.json',
+    project: './typescript/tsconfig.eslint.json',
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint/eslint-plugin'],
