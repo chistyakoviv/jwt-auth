@@ -64,26 +64,24 @@ describe('Local storage', () => {
 
     it('Gets string value with default options', () => {
         const storage = new LocalStorage();
-        const EXPECT_VALUE = 'local';
 
         storage.set(key, 'local');
 
         // Act
         const value = storage.get(key);
 
-        expect(value).toBe(EXPECT_VALUE);
+        expect(value).toBe('local');
     });
 
     it('Gets string value with custom prefix', () => {
         const options: LocalStorageOptions = { prefix: 'test.' };
         const storage = new LocalStorage(options);
-        const EXPECT_VALUE = 'local';
 
         storage.set(key, 'local');
 
         // Act
         const value = storage.get(key);
 
-        expect(value).toBe(EXPECT_VALUE);
+        expect(value).toBe('local');
     });
 });
