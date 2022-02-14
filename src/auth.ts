@@ -18,7 +18,7 @@ export class Auth {
 
     constructor(authOptions: AuthOptions) {
         const options: AuthOptions = merge(authOptions, defaultOptions);
-        // console.log(options);
+
         this.httpClient = options.httpClient
             ? new options.httpClient()
             : new AxiosAdapter();
