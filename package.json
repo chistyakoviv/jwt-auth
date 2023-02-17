@@ -5,8 +5,9 @@
   "main": "./dist/cjs/auth.js",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && npm run build:cjs",
+    "build": "npm run clean && npm run build:cjs && npm run build:types",
     "build:cjs": "tsc -p ./typescript/tsconfig.cjs.json",
+    "build:types": "tsc -p ./typescript/tsconfig.types.json",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "jest",

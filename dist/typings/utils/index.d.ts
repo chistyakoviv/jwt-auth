@@ -1,0 +1,11 @@
+export declare const isUnset: (value: any) => boolean;
+export declare const isSet: (value: any) => boolean;
+export declare function encodeValue(val: any): string;
+export declare function decodeValue(val: any): any;
+export declare function getProp(holder: Record<string, any>, propName: string | false): any;
+export declare function addTokenPrefix(token: string | boolean, tokenType: string | false): string | boolean;
+export declare function removeTokenPrefix(token: string | boolean, tokenType: string | false): string | boolean;
+export declare function cleanObj(obj: Record<string, any>): Record<string, any>;
+export declare function deepCopy(obj: Record<string, any>): Record<string, any>;
+export declare function isObject(val: any): boolean;
+export declare function merge(base: any, defaults: any): any;
