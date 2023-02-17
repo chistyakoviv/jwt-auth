@@ -1,10 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Auth = void 0;
+var tslib_1 = require("tslib");
 var options_1 = require("./options");
 var aggregator_storage_1 = require("./storages/aggregator-storage");
 var axios_adapter_1 = require("./http/axios-adapter");
 var utils_1 = require("./utils");
+(0, tslib_1.__exportStar)(require("./options"), exports);
+(0, tslib_1.__exportStar)(require("./types/strategy"), exports);
+(0, tslib_1.__exportStar)(require("./types/storage"), exports);
+(0, tslib_1.__exportStar)(require("./types/http"), exports);
+(0, tslib_1.__exportStar)(require("./http/axios-adapter"), exports);
+(0, tslib_1.__exportStar)(require("./http/refresh-controller"), exports);
+(0, tslib_1.__exportStar)(require("./http/request-controller"), exports);
+(0, tslib_1.__exportStar)(require("./tokens/token"), exports);
+(0, tslib_1.__exportStar)(require("./tokens/refresh-token"), exports);
+(0, tslib_1.__exportStar)(require("./tokens/token-status"), exports);
+(0, tslib_1.__exportStar)(require("./storages/aggregator-storage"), exports);
+(0, tslib_1.__exportStar)(require("./storages/cookie-storage"), exports);
+(0, tslib_1.__exportStar)(require("./storages/local-storage"), exports);
+(0, tslib_1.__exportStar)(require("./strategies/local-strategy"), exports);
+(0, tslib_1.__exportStar)(require("./strategies/refresh-strategy"), exports);
 var Auth = (function () {
     function Auth(authOptions) {
         var _this = this;

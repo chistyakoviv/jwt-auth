@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LocalStrategy = exports.DEFAULTS = void 0;
+exports.LocalStrategy = exports.LOCAL_STRATEGY_DEFAULTS = void 0;
 var tslib_1 = require("tslib");
 var request_controller_1 = require("../http/request-controller");
 var token_1 = require("../tokens/token");
 var utils_1 = require("../utils");
-exports.DEFAULTS = {
+exports.LOCAL_STRATEGY_DEFAULTS = {
     name: 'local',
     endpoints: {
         login: {
@@ -42,7 +42,7 @@ exports.DEFAULTS = {
 var LocalStrategy = (function () {
     function LocalStrategy(auth, options) {
         this.auth = auth;
-        this.options = (0, utils_1.merge)(options, exports.DEFAULTS);
+        this.options = (0, utils_1.merge)(options, exports.LOCAL_STRATEGY_DEFAULTS);
         this.token = new token_1.Token(this, this.auth.storage);
         this.requestController = new request_controller_1.RequestController(this);
     }

@@ -11,7 +11,7 @@ export interface RefreshStrategyOptions extends LocalStrategyOptions, Refreshabl
     endpoints: RefreshStrategyEndpoints;
     autoLogout: boolean;
 }
-export declare const DEFAULTS: StrategyPartialOptions<RefreshStrategyOptions>;
+export declare const REFRESH_STRATEGY_DEFAULTS: StrategyPartialOptions<RefreshStrategyOptions>;
 export declare class RefreshStrategy<OptionsT extends RefreshStrategyOptions> extends LocalStrategy<OptionsT> implements RefreshableStrategy<OptionsT> {
     readonly auth: Auth;
     refreshToken: RefreshToken;

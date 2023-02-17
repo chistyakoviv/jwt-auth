@@ -15,7 +15,7 @@ export interface LocalStrategyOptions extends TokenableStrategyOptions {
     grantType: string | false;
     scope: string[] | false;
 }
-export declare const DEFAULTS: LocalStrategyOptions;
+export declare const LOCAL_STRATEGY_DEFAULTS: LocalStrategyOptions;
 export declare class LocalStrategy<OptionsT extends LocalStrategyOptions> implements TokenableStrategy {
     readonly auth: Auth;
     readonly options: OptionsT;

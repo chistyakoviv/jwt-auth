@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RefreshStrategy = exports.DEFAULTS = void 0;
+exports.RefreshStrategy = exports.REFRESH_STRATEGY_DEFAULTS = void 0;
 var tslib_1 = require("tslib");
 var utils_1 = require("../utils");
 var refresh_controller_1 = require("../http/refresh-controller");
 var refresh_token_1 = require("../tokens/refresh-token");
 var expired_auth_session_error_1 = require("../errors/expired-auth-session-error");
 var local_strategy_1 = require("./local-strategy");
-exports.DEFAULTS = {
+exports.REFRESH_STRATEGY_DEFAULTS = {
     name: 'refresh',
     endpoints: {
         refresh: {
@@ -29,7 +29,7 @@ exports.DEFAULTS = {
 var RefreshStrategy = (function (_super) {
     (0, tslib_1.__extends)(RefreshStrategy, _super);
     function RefreshStrategy(auth, options) {
-        var _this = _super.call(this, auth, (0, utils_1.merge)(options, exports.DEFAULTS)) || this;
+        var _this = _super.call(this, auth, (0, utils_1.merge)(options, exports.REFRESH_STRATEGY_DEFAULTS)) || this;
         _this.auth = auth;
         _this.refreshToken = new refresh_token_1.RefreshToken(_this, _this.auth.storage);
         _this.refreshController = new refresh_controller_1.RefreshController(_this);

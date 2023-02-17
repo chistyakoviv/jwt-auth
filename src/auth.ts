@@ -7,6 +7,22 @@ import { merge } from './utils';
 
 export type ErrorListener = (...args: unknown[]) => void;
 
+export * from './options';
+export * from './types/strategy';
+export * from './types/storage';
+export * from './types/http';
+export * from './http/axios-adapter';
+export * from './http/refresh-controller';
+export * from './http/request-controller';
+export * from './tokens/token';
+export * from './tokens/refresh-token';
+export * from './tokens/token-status';
+export * from './storages/aggregator-storage';
+export * from './storages/cookie-storage';
+export * from './storages/local-storage';
+export * from './strategies/local-strategy';
+export * from './strategies/refresh-strategy';
+
 export class Auth {
     private strategies: Record<string, Strategy> = {};
     private state: Record<string, any> = { user: null, loggedIn: false };

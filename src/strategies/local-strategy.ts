@@ -25,7 +25,7 @@ export interface LocalStrategyOptions extends TokenableStrategyOptions {
     scope: string[] | false;
 }
 
-export const DEFAULTS: LocalStrategyOptions = {
+export const LOCAL_STRATEGY_DEFAULTS: LocalStrategyOptions = {
     name: 'local',
     endpoints: {
         login: {
@@ -68,7 +68,7 @@ export class LocalStrategy<OptionsT extends LocalStrategyOptions>
     public readonly requestController: RequestController;
 
     constructor(public readonly auth: Auth, options: OptionsT) {
-        this.options = merge(options, DEFAULTS);
+        this.options = merge(options, LOCAL_STRATEGY_DEFAULTS);
         this.token = new Token(this, this.auth.storage);
         this.requestController = new RequestController(this);
     }

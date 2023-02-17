@@ -27,25 +27,26 @@ export interface RefreshStrategyOptions
     autoLogout: boolean;
 }
 
-export const DEFAULTS: StrategyPartialOptions<RefreshStrategyOptions> = {
-    name: 'refresh',
-    endpoints: {
-        refresh: {
-            url: '/api/auth/refresh',
-            method: 'post',
+export const REFRESH_STRATEGY_DEFAULTS: StrategyPartialOptions<RefreshStrategyOptions> =
+    {
+        name: 'refresh',
+        endpoints: {
+            refresh: {
+                url: '/api/auth/refresh',
+                method: 'post',
+            },
         },
-    },
-    refreshToken: {
-        property: 'refresh_token',
-        data: 'refresh_token',
-        maxAge: 60 * 60 * 24 * 30,
-        required: true,
-        tokenRequired: false,
-        prefix: '_refresh_token.',
-        expirationPrefix: '_refresh_token_expiration.',
-    },
-    autoLogout: false,
-};
+        refreshToken: {
+            property: 'refresh_token',
+            data: 'refresh_token',
+            maxAge: 60 * 60 * 24 * 30,
+            required: true,
+            tokenRequired: false,
+            prefix: '_refresh_token.',
+            expirationPrefix: '_refresh_token_expiration.',
+        },
+        autoLogout: false,
+    };
 
 export class RefreshStrategy<OptionsT extends RefreshStrategyOptions>
     extends LocalStrategy<OptionsT>
@@ -55,7 +56,7 @@ export class RefreshStrategy<OptionsT extends RefreshStrategyOptions>
     public refreshController: RefreshController;
 
     constructor(public readonly auth: Auth, options: OptionsT) {
-        super(auth, merge(options, DEFAULTS));
+        super(auth, merge(options, REFRESH_STRATEGY_DEFAULTS));
 
         this.refreshToken = new RefreshToken(this, this.auth.storage);
         this.refreshController = new RefreshController(this);
