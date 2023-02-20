@@ -3,7 +3,7 @@ import {
     LocalStrategyMock,
     mockSetHeader,
     mockClearHeader,
-    DEFAULTS,
+    LOCAL_STRATEGY_DEFAULTS,
 } from '../strategies/local-strategy.mock';
 import { AuthMock } from '../auth.mock';
 import type { TokenableStrategy } from '../../src/types/strategy';
@@ -23,7 +23,10 @@ describe('Token', () => {
     const EXPIRATION_TIME = 1643569979120 * 1000;
 
     const auth = new AuthMock(defaultOptions);
-    const strategy: TokenableStrategy = new LocalStrategyMock(auth, DEFAULTS);
+    const strategy: TokenableStrategy = new LocalStrategyMock(
+        auth,
+        LOCAL_STRATEGY_DEFAULTS,
+    );
     const storage: Storage = new CookieStorageMock();
     const strategyKey = strategy.options.token.prefix + strategy.options.name;
     const expirationKey =

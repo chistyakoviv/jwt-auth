@@ -1,6 +1,6 @@
 import {
     LocalStrategy,
-    DEFAULTS,
+    LOCAL_STRATEGY_DEFAULTS,
     LocalStrategyOptions,
 } from '../../src/strategies/local-strategy';
 import {
@@ -365,7 +365,7 @@ describe('Local strategy', () => {
             await strategy.fetchUser();
         } catch (e: any) {
             expect(e.message).toEqual(
-                `User Data response does not contain field ${DEFAULTS.user.property}`,
+                `User Data response does not contain field ${LOCAL_STRATEGY_DEFAULTS.user.property}`,
             );
         }
         expect(mockCallOnError).toHaveBeenCalled();

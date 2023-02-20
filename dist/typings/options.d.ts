@@ -8,9 +8,6 @@ declare type StrategyCtor = {
 declare type StorageCtor = {
     new (options?: StorageOptions): Storage;
 };
-declare type HTTPClientCtor = {
-    new (): HTTPClient;
-};
 declare type StorageOption = {
     storage: StorageCtor;
     storageOptions?: StorageOptions;
@@ -25,7 +22,7 @@ export interface AuthOptions {
         logout: string;
         home: string;
     };
-    httpClient?: HTTPClientCtor;
+    httpClient?: HTTPClient;
     defaultStrategy?: string;
     storages: StorageOption[];
     strategies: StrategyOption[];

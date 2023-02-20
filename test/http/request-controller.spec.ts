@@ -1,10 +1,10 @@
 import {
     RefreshStrategyMock,
     mockRefreshTokens,
-    DEFAULTS,
+    REFRESH_STRATEGY_DEFAULTS,
     RefreshStrategyOptions,
 } from '../strategies/refresh-strategy.mock';
-import { DEFAULTS as LOCAL_DEFAULTS } from '../strategies/local-strategy.mock';
+import { LOCAL_STRATEGY_DEFAULTS } from '../strategies/local-strategy.mock';
 import {
     AuthMock,
     mockSetHeader,
@@ -23,11 +23,11 @@ describe('Request controller', () => {
     let controller: RequestController;
 
     beforeEach(async () => {
-        const options = deepCopy(LOCAL_DEFAULTS);
+        const options = deepCopy(LOCAL_STRATEGY_DEFAULTS);
         auth = new AuthMock(defaultOptions);
         strategy = new RefreshStrategyMock(auth, {
             ...options,
-            ...(DEFAULTS as RefreshStrategyOptions),
+            ...(REFRESH_STRATEGY_DEFAULTS as RefreshStrategyOptions),
         });
         controller = new RequestController(strategy);
         mockRefreshTokens.mockClear();

@@ -29,7 +29,7 @@ var Auth = (function () {
         this.errorListeners = [];
         var options = (0, utils_1.merge)(authOptions, options_1.defaultOptions);
         this.httpClient = options.httpClient
-            ? new options.httpClient()
+            ? options.httpClient
             : new axios_adapter_1.AxiosAdapter();
         this.storage = new aggregator_storage_1.AggregatorStorage(options.storages.map(function (s) { return new s.storage(s.storageOptions); }));
         options.strategies.forEach(function (s) {

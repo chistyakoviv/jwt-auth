@@ -32,7 +32,7 @@ export interface AuthOptions {
         logout: string;
         home: string;
     };
-    httpClient?: HTTPClientCtor;
+    httpClient?: HTTPClient;
     defaultStrategy?: string;
     storages: StorageOption[];
     strategies: StrategyOption[];
@@ -44,7 +44,6 @@ export const defaultOptions: AuthOptions = {
         logout: '/logout',
         home: '/',
     },
-    httpClient: AxiosAdapter,
     storages: [],
     strategies: [],
 };

@@ -3,7 +3,7 @@ import {
     RefreshStrategyMock,
     mockSetHeader,
     mockClearHeader,
-    DEFAULTS,
+    REFRESH_STRATEGY_DEFAULTS,
     RefreshStrategyOptions,
 } from '../strategies/refresh-strategy.mock';
 import { AuthMock } from '../auth.mock';
@@ -26,7 +26,7 @@ describe('Refresh token', () => {
     const auth = new AuthMock(defaultOptions);
     const strategy: RefreshableStrategy = new RefreshStrategyMock(
         auth,
-        DEFAULTS as RefreshStrategyOptions,
+        REFRESH_STRATEGY_DEFAULTS as RefreshStrategyOptions,
     );
     const storage: Storage = new CookieStorageMock();
     const strategyKey =

@@ -1,12 +1,15 @@
-import { RefreshStrategy, DEFAULTS } from '../strategies/refresh-strategy.mock';
-import { DEFAULTS as LOCAL_DEFAULTS } from '../../src/strategies/local-strategy';
+import {
+    RefreshStrategy,
+    REFRESH_STRATEGY_DEFAULTS,
+} from '../../src/strategies/refresh-strategy';
+import { LOCAL_STRATEGY_DEFAULTS } from '../../src/strategies/local-strategy';
 import { RequestControllerMock } from '../http/request-controller.mock';
 import { RefreshControllerMock } from '../http/refresh-controller.mock';
 import { Auth } from '../../src/auth';
 
 export * from '../http/request-controller.mock';
 export * from '../../src/strategies/refresh-strategy';
-export { DEFAULTS } from '../../src/strategies/refresh-strategy';
+export { REFRESH_STRATEGY_DEFAULTS } from '../../src/strategies/refresh-strategy';
 export const mockInit = jest.fn();
 export const mockLogin = jest.fn();
 export const mockFetchUser = jest.fn();
@@ -21,7 +24,11 @@ export const RefreshStrategyMock = jest
     .mockImplementation((auth: Auth, options) => {
         const strategy: any = {
             auth,
-            options: { ...LOCAL_DEFAULTS, ...DEFAULTS, ...options },
+            options: {
+                ...LOCAL_STRATEGY_DEFAULTS,
+                ...REFRESH_STRATEGY_DEFAULTS,
+                ...options,
+            },
 
             init: mockInit,
             login: mockLogin,

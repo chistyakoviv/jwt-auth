@@ -1,10 +1,13 @@
-import { LocalStrategy, DEFAULTS } from '../../src/strategies/local-strategy';
+import {
+    LocalStrategy,
+    LOCAL_STRATEGY_DEFAULTS,
+} from '../../src/strategies/local-strategy';
 import { RequestControllerMock } from '../http/request-controller.mock';
 import { Auth } from '../../src/auth';
 
 export * from '../http/request-controller.mock';
 export {
-    DEFAULTS,
+    LOCAL_STRATEGY_DEFAULTS,
     LocalStrategyOptions,
 } from '../../src/strategies/local-strategy';
 export const mockInit = jest.fn();
@@ -21,7 +24,7 @@ export const LocalStrategyMock = jest
         const strategy = Object.create(LocalStrategyMock.prototype);
         const methods = {
             auth,
-            options: { ...DEFAULTS, ...options },
+            options: { ...LOCAL_STRATEGY_DEFAULTS, ...options },
 
             init: mockInit,
             login: mockLogin,

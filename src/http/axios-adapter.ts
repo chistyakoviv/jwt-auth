@@ -1,24 +1,30 @@
 import { HTTPClient, HTTPRequest, HTTPResponse } from '../types/http';
-import axios from 'axios';
+import axios, { AxiosStatic } from 'axios';
 
 export class AxiosAdapter implements HTTPClient {
+    private axios: AxiosStatic;
+
+    constructor(axiosInstance?: AxiosStatic) {
+        this.axios = axiosInstance ? axiosInstance : axios;
+    }
+
     request(params: HTTPRequest): Promise<HTTPResponse> {
-        return axios.request(params);
+        return this.axios.request(params);
     }
 
     injectRequestInterceptor(fn: (config: any) => any): number {
-        return axios.interceptors.request.use(fn);
+        return this.axios.interceptors.request.use(fn);
     }
 
     ejectRequestInterceptor(id: number): void {
-        return axios.interceptors.request.eject(id);
+        return this.axios.interceptors.request.eject(id);
     }
 
     setHeader(name: string, value: string | boolean): void {
-        axios.defaults.headers.common[name] = value;
+        this.axios.defaults.headers.common[name] = value;
     }
 
     hasHeader(name: string): boolean {
-        return Boolean(axios.defaults.headers.common[name]);
+        return Boolean(this.axios.defaults.headers.common[name]);
     }
 }

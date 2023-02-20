@@ -36,7 +36,7 @@ export class Auth {
         const options: AuthOptions = merge(authOptions, defaultOptions);
 
         this.httpClient = options.httpClient
-            ? new options.httpClient()
+            ? options.httpClient
             : new AxiosAdapter();
         this.storage = new AggregatorStorage(
             options.storages.map((s) => new s.storage(s.storageOptions)),
